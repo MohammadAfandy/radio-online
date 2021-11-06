@@ -1,10 +1,10 @@
 <script>
+  import IconButton from './IconButton.svelte';
   export let isOpen = false;
 
   let body = document.body;
   $: if (isOpen ) {
     body.style.overflow = 'hidden';
-    // window.scrollTo({ top: 0 });
   } else {
     body.style.overflow = null;
   }
@@ -12,6 +12,9 @@
 </script>
 
 <div class="drawer" class:open={isOpen}>
+  <div class="close-button">
+    <IconButton iconName="times" size={2} onClick={() => isOpen = false} />
+  </div>
   <slot></slot>
 </div>
 
@@ -22,7 +25,7 @@
     height: 100%;
     top: var(--appbar-height);
     overflow: hidden;
-    background-color: var(--main-background);
+    background-color: var(--secondary-background);
     padding: 1rem 2rem;
     transform: translate(100%, 0);
     transition: transform 0.3s ease-in-out;
@@ -34,10 +37,8 @@
     transform: translate(0, 0);
   }
 
-  /* @media screen and (min-width: 768px) {
-    .container {
-      border-radius: 15px;
-      margin: 2rem 4rem;
-    }
-  } */
+  .close-button {
+    display: flex;
+    flex-direction: row-reverse;
+  }
 </style>

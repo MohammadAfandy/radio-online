@@ -32,6 +32,10 @@ export default class BaseDB {
     return (await this.dbPromise).delete(this.objectStoreName, id);
   }
 
+  static async clear() {
+    return (await this.dbPromise).delete(this.objectStoreName);
+  }
+
   static async isExist(id) {
     return !!(await this.get(id));
   }

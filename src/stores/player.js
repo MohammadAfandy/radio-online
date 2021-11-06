@@ -4,12 +4,12 @@ import myAudio from '../services/audio';
 const createPlayer = () => {
   const { subscribe, set, update } = writable({
     stationuuid: '',
-    name: 'Ready',
-    song: 'Song Info',
-    favicon: 'favicons/placeholder.jpg',
+    name: 'No station played',
+    song: '...',
+    favicon: '',
     url: '',
     url_resolved: '',
-    volume: 18,
+    volume: 20,
     isPlaying: false,
   });
 
@@ -55,7 +55,7 @@ const createPlayer = () => {
         volume,
       };
     }),
-  }
+  };
 };
 
 export const player = createPlayer();

@@ -29,7 +29,7 @@
     background-color: var(--main-background);
     padding: 2px 4px;
     min-width: 100px;
-    color: var(--font-color);
+    color: var(--primary-color);
   }
 
   .search {

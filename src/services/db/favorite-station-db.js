@@ -1,8 +1,8 @@
 import BaseDB from './base-db';
 
-export default class FavoriteStation extends BaseDB {}
+export default class FavoriteStationDB extends BaseDB {}
 
-FavoriteStation.init({
+FavoriteStationDB.init({
   objectStoreName: 'favorite-station',
   keyPath: 'stationuuid',
 });

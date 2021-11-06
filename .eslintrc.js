@@ -35,7 +35,6 @@ module.exports = {
     ],
     'no-trailing-spaces': [
       'error',
-      'always',
     ],
   }
 };

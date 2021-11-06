@@ -2,8 +2,10 @@
   import Image from 'svelte-image';
   import Separator from './UI/Separator.svelte';
   import IconButton from './UI/IconButton.svelte';
-  import FavoriteStation from '../services/db/favorite-station';
+  import { favoriteStations } from '../stores';
   import { player } from '../stores';
+  import { onInterval } from '../utils/interval';
+  import { radioLise } from '../services/api';
 
   const handleStop = () => {
     player.stop();
@@ -14,22 +16,20 @@
   };
 
   const handlePrev = async () => {
-    const favoriteStations = await FavoriteStation.getAll();
-    const currentStationIndex = favoriteStations.findIndex((favorite) => favorite.stationuuid === $player.stationuuid);
-    let prevStation = favoriteStations[currentStationIndex - 1];
+    const currentStationIndex = $favoriteStations.findIndex((favorite) => favorite.stationuuid === $player.stationuuid);
+    let prevStation = $favoriteStations[currentStationIndex - 1];
     if (!prevStation) {
-      prevStation = favoriteStations[favoriteStations.length - 1];
+      prevStation = $favoriteStations[$favoriteStations.length - 1];
     }
     player.setCurrentStation(prevStation);
     if ($player.isPlaying) player.play();
   };
 
   const handleNext = async () => {
-    const favoriteStations = await FavoriteStation.getAll();
-    const currentStationIndex = favoriteStations.findIndex((favorite) => favorite.stationuuid === $player.stationuuid);
-    let nextStation = favoriteStations[currentStationIndex + 1];
+    const currentStationIndex = $favoriteStations.findIndex((favorite) => favorite.stationuuid === $player.stationuuid);
+    let nextStation = $favoriteStations[currentStationIndex + 1];
     if (!nextStation) {
-      nextStation = favoriteStations[0];
+      nextStation = $favoriteStations[0];
     }
     player.setCurrentStation(nextStation);
     if ($player.isPlaying) player.play();
@@ -39,9 +39,21 @@
     player.setVolume(event.target.value);
   }
 
+  onInterval(async () => {
+    if ($player.url_resolved && $player.isPlaying) {
+      const { data: song } = await radioLise.get('', {
+        params: {
+          url: $player.url_resolved,
+        },
+      });
+      if (song.title) {
+        $player.song = song.title;
+      }
+    }
+  }, 20000);
 </script>
 
-<div>
+<div class="player-container">
   <div class="station-info">
     <Image
       wrapperClass="station-logo"
@@ -55,20 +67,29 @@
   </div>
   <Separator />
   <div class="player">
-    <IconButton size={1.5} iconName="step-backward" onClick={handlePrev} />
+    <IconButton size={2} iconName="step-backward" onClick={handlePrev} />
     {#if ($player.isPlaying)}
-      <IconButton size={1.5} iconName="stop" onClick={handleStop} />
+      <IconButton size={2} iconName="stop" onClick={handleStop} />
     {:else}
-      <IconButton size={1.5} iconName="play" onClick={handlePlay} />
+      <IconButton size={2} iconName="play" onClick={handlePlay} />
     {/if}
-    <IconButton size={1.5} iconName="step-forward" onClick={handleNext} />
-    <IconButton size={1.5} iconName="volume-off">
+    <IconButton size={2} iconName="step-forward" onClick={handleNext} />
+  </div>
+  <div class="volume">
+    <IconButton size={1} iconName="volume-off">
       <input type="range" value={$player.volume} on:change={handleChangeVolume} min=0 max=20 />
     </IconButton>
+    <IconButton size={1} iconName="volume-up" />
   </div>
 </div>
 
 <style>
+  .player-container {
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    background-color: var(--secondary-background);
+  }
+
   .station-info {
     display: flex;
     align-items: end;
@@ -95,11 +116,36 @@
 
   .station-detail .song {
     font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
 
   .player {
+    margin-top: 1rem;
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .volume {
+    display: flex;
+    justify-content: end;
+  }
+
+  .volume input {
+    width: 100vw;
+  }
+
+  @media screen and (min-width: 768px) {
+    .player {
+      justify-content: space-evenly;
+    }
+
+    .volume input {
+      width: 400px;
+    }
   }
 
 </style>

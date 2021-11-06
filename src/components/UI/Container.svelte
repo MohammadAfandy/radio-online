@@ -10,7 +10,7 @@
 <style>
   .container {
     position: relative;
-    background-color: var(--secondary-background);
+    background-color: var(--main-background);
     padding: 1rem 2rem;
     margin-top: var(--appbar-height);
   }

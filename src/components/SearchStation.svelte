@@ -1,40 +1,33 @@
 <script>
-  import { onMount } from 'svelte';
-  import FavoriteStationItem from './FavoriteStationItem.svelte';
-  import { api } from '../services/api';
-  import FavoriteStation from '../services/db/favorite-station';
+  import StationItem from './StationItem.svelte';
+  import { radioBrowser } from '../services/api';
+  import { favoriteStations } from '../stores';
   import SearchInput from './UI/SearchInput.svelte';
 
   let searchedStations = [];
-  onMount(async() => {
-    // searchedStations = await FavoriteStation.getAll();
-  })
+  let notFound = false;
 
   const handleSearch = async (event) => {
     const { value: SearchValue } = event.target;
-    console.log({ SearchValue })
-    const { data: stations } = await api.get('stations/search', {
-      params: {
-        name: SearchValue,
-      },
-    });
-    // for (let station of stations) {
-    //   await FavoriteStation.put(station);
-    // }
-    const favoriteStationsUuid = (await FavoriteStation.getAll()).map((station) => station.stationuuid);
-    searchedStations = stations.map((station) => ({
-      ...station,
-      isFavorite: favoriteStationsUuid.includes(station.stationuuid),
-    }));
-  };
-
-  const handleAdd = async (event) => {
-    const { uuid } = event.detail;
-    const selectedStation = searchedStations.find((station) => station.stationuuid === uuid);
-    if (selectedStation) {
-      await FavoriteStation.put(selectedStation);
+    if (SearchValue.trim() !== '') {
+      const { data: stations } = await radioBrowser.get('stations/search', {
+        params: {
+          name: SearchValue,
+        },
+      });
+      if (stations.length > 0) {
+        const favoriteStationsUuid = $favoriteStations.map((station) => station.stationuuid);
+        searchedStations = stations.map((station) => ({
+          ...station,
+          isFavorite: favoriteStationsUuid.includes(station.stationuuid),
+        }));
+        notFound = false;
+      } else {
+        notFound = true;
+      }
     } else {
-      console.error('aa');
+      notFound = false;
+      searchedStations = [];
     }
   };
 
@@ -49,13 +42,17 @@
     />
   </div>
   <div class="list-wrapper">
-    {#each searchedStations as searchedStation (searchedStation.stationuuid)}
-      <FavoriteStationItem
-        favoriteStation={searchedStation}
-        isFavorite={searchedStation.isFavorite}
-        on:add={handleAdd}
-      />
-    {/each}
+    {#if notFound}
+      <i class="fa fa-frown" aria-hidden="true"></i>
+      <span>Sorry, no stations found</span>
+    {:else}
+      {#each searchedStations as searchedStation (searchedStation.stationuuid)}
+        <StationItem
+          station={searchedStation}
+          isFavorite={searchedStation.isFavorite}
+        />
+      {/each}
+    {/if}
   </div>
 </div>
 
@@ -63,12 +60,13 @@
   .search-station {
     display: flex;
     flex-direction: column;
-    padding: 1rem 0;
+    padding: 1rem 2rem;
   }
 
   .list-wrapper {
     overflow: auto;
     max-height: 550px;
+    padding: 1rem;
   }
 
   .search {

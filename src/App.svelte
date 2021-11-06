@@ -13,11 +13,10 @@
   const handleOpenDrawer = (event) => {
     isDrawerOpen = !isDrawerOpen;
     const { type } = event.detail;
-    console.log({ type, isDrawerOpen });
     if (type === 'search') {
       DrawerComponent = SearchStation;
     } else {
-      console.log('belum');
+      // TODO
     }
   }
 
@@ -25,7 +24,7 @@
 
 <main>
   <AppBar on:menu-click={handleOpenDrawer} />
-  <Drawer isOpen={isDrawerOpen}>
+  <Drawer bind:isOpen={isDrawerOpen}>
     <svelte:component this={DrawerComponent}/>
   </Drawer>
   <Container {isDrawerOpen}>

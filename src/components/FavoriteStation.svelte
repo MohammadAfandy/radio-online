@@ -1,36 +1,30 @@
 <script>
   import { onMount } from 'svelte';
-  import FavoriteStationItem from './FavoriteStationItem.svelte';
-  import FavoriteStation from '../services/db/favorite-station';
+  import StationItem from './StationItem.svelte';
+  import { favoriteStations } from '../stores';
   import SearchInput from './UI/SearchInput.svelte';
 
-  let favoriteStations = [];
   onMount(async() => {
-    favoriteStations = await FavoriteStation.getAll();
+    await favoriteStations.init();
   })
-
-  const handleDelete = async (event) => {
-    const { uuid } = event.detail;
-    await FavoriteStation.delete(uuid);
-    favoriteStations = favoriteStations.filter((station) => station.stationuuid !== uuid);
-  };
 
   const handleSearch = async (event) => {
     const { value: searchValue } = event.target;
-    const allStations = await FavoriteStation.getAll();
     if (searchValue.trim() !== '') {
-      favoriteStations = allStations.filter((station) => {
+      stations = $favoriteStations.filter((station) => {
         return station.name.toLowerCase().includes(searchValue.toLowerCase())
       });
     } else {
-      favoriteStations = allStations;
+      stations = $favoriteStations;
     }
   };
+
+  $: stations = $favoriteStations;
 
 </script>
 
 <div class="favorite-station">
-	<h1>Favorite Stations</h1>
+	<h1>Favorite Stations ({$favoriteStations.length})</h1>
   <div class="search">
     <SearchInput
       placeholder="Search favorite station"
@@ -38,11 +32,10 @@
     />
   </div>
   <div class="list-wrapper">
-    {#each favoriteStations as favoriteStation (favoriteStation.stationuuid)}
-      <FavoriteStationItem
-        {favoriteStation}
+    {#each stations as station (station.stationuuid)}
+      <StationItem
+        {station}
         isFavorite={true}
-        on:delete={handleDelete}
       />
     {/each}
   </div>
@@ -52,17 +45,13 @@
   .favorite-station {
     display: flex;
     flex-direction: column;
-    padding: 1rem 0;
-  }
-
-  .list-wrapper {
-
+    border-radius: 10px;
+    padding: 1rem 2rem;
+    background-color: var(--secondary-background);
   }
 
   .search {
     margin-bottom: 1rem;
-    max-width: 400px;
-    align-self: end;
   }
 
   h1 {

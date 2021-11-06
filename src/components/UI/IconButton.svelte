@@ -11,6 +11,7 @@
 
 <style>
   button {
+    cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,7 +19,6 @@
     background: none;
     color: inherit;
     padding: 5px;
-    /* margin-right: 10px; */
   }
 
   button i {

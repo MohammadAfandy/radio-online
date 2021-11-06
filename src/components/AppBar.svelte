@@ -42,7 +42,7 @@
     padding: 10px;
     align-items: center;
     height: var(--appbar-height);
-    background-color: var(--appbar-background);
+    background-color: var(--secondary-background);
     box-shadow: 0 8px 8px 0 var(--shadow-color);
   }
 
@@ -57,14 +57,5 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
-  button {
-    display: block;
-    border: none;
-    background: none;
-    color: inherit;
-    padding: 5px;
-    font-size: 1.5rem;
   }
 </style>

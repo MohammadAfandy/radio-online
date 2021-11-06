@@ -2,6 +2,6 @@
 
 <style>
   .separator {
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--primary-color);
   }
 </style>
