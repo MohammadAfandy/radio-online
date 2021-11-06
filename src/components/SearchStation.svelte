@@ -60,13 +60,13 @@
   .search-station {
     display: flex;
     flex-direction: column;
-    padding: 1rem 2rem;
+    padding: .5rem;
   }
 
   .list-wrapper {
     overflow: auto;
     max-height: 550px;
-    padding: 1rem;
+    padding: .5rem;
   }
 
   .search {

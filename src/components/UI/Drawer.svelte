@@ -26,7 +26,7 @@
     top: var(--appbar-height);
     overflow: hidden;
     background-color: var(--secondary-background);
-    padding: 1rem 2rem;
+    padding: 1rem;
     transform: translate(100%, 0);
     transition: transform 0.3s ease-in-out;
     overflow: auto;
