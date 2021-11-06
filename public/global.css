@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+/* CSS Variables */
+:root {
+  --main-background: #FAFAFA;
+  --secondary-background: #F2F2F2;
+  --appbar-background: #F7F7F7;
+  --font-color: #222222;
+  --primary-color: #EA7B0C;
+  --secondary-color: #ff9e2f;
+  --border-color: rgba(192, 192, 192, 0.9);
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --appbar-height: 60px;
+  --skeleton-main-color: #ddd;
+  --skeleton-secondary-color: #e8e8e8;
+}
+
+/* Starter Configuration */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: background-color 0.2s linear;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--main-background);
+  color: var(--font-color);
+}
+
+a, button, input, textarea {
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+a {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+[data-theme="dark"] {
+  --main-background: #1C1C1C;
+  --secondary-background: #333333;
+  --appbar-background: #161616;
+  --font-color: #eeeeee;
+  --shadow-color: rgba(0, 0, 0, 1);
+  --skeleton-main-color: #383a3f ;
+  --skeleton-secondary-color: #43454b ;
+}
