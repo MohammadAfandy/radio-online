@@ -1,7 +1,7 @@
 export default {
-  APPNAME: 'RadioOnline',
+  APPNAME: 'RadioSV',
   DATABASE: {
-    NAME: 'radio-online',
+    NAME: 'radio-sv',
     VERSION: 1,
   },
 };
