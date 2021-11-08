@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import myAudio from '../services/audio';
+import { radioBrowser } from '../services/api';
 import CONFIG from '../configs';
 
 const { VOLUME_STEP } = CONFIG;
@@ -41,6 +42,10 @@ const createPlayer = () => {
     play: (url) => update((state) => {
       url = url || state.url_resolved || state.url;
       myAudio.play(url);
+
+      // send click count to radiobrowser server
+      radioBrowser.get(`url/${state.stationuuid}`);
+
       return {
         ...state,
         isPlaying: true,

@@ -13,6 +13,10 @@
       const { data: stations } = await radioBrowser.get('stations/search', {
         params: {
           name: SearchValue,
+          limit: 20,
+          order: 'votes',
+          reverse: true,
+          hideBroken: true,
         },
       });
       if (stations.length > 0) {
@@ -50,6 +54,7 @@
         <StationItem
           station={searchedStation}
           isFavorite={searchedStation.isFavorite}
+          showVoteCount
         />
       {/each}
     {/if}

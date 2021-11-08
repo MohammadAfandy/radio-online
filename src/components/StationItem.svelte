@@ -5,10 +5,12 @@
   import Card from './UI/Card.svelte';
   import IconButton from './UI/IconButton.svelte';
   import { player, favoriteStations } from '../stores';
+  import { radioBrowser } from '../services/api';
 
   const dispatch = createEventDispatcher();
   export let station;
-  export let isFavorite;
+  export let isFavorite = false;
+  export let showVoteCount = false;
 
   const handlePlay = () => {
     player.setCurrentStation(station);
@@ -27,6 +29,13 @@
     favoriteStations.add(station);
     isFavorite = true;
     dispatch('add', {
+      station,
+    });
+  };
+
+  const handleVote = async () => {
+    await radioBrowser.get(`vote/${station.stationuuid}`);
+    dispatch('vote', {
       station,
     });
   };
@@ -50,30 +59,42 @@
         />
         <span class="station-title">{station.name}</span>
       </div>
-      {#if isFavorite}
-        <IconButton iconName="heart" onClick={handleDelete} />
-      {:else}
-        <IconButton iconName="heart-o" onClick={handleAdd} />
+      {#if station.homepage}
+        <a href={station.homepage} ref="noreferrer" target="_blank">
+          <IconButton iconName="external-link" onClick={true} />
+        </a>
       {/if}
     </div>
     <div class="station-detail">
+      {#if station.tags}
+        {#each station.tags.split(',').slice(0, 3) as tag}
+          <span class="badge">
+            {tag}
+          </span>
+        {/each}
+      {/if}
       {#if station.country}
         <span class="badge">{station.country}</span>
       {/if}
       {#if station.state}
         <span class="badge">{station.state}</span>
       {/if}
-      {#if station.tags}
-        <span class="badge">{station.tags}</span>
-      {/if}
       {#if station.bitrate}
         <span class="badge">{station.bitrate} kbps</span>
       {/if}
-      {#if station.homepage}
-          <a href={station.homepage} ref="noreferrer" target="_blank">
-          <IconButton iconName="external-link" />
-        </a>
+    </div>
+    <div class="station-action">
+      {#if isFavorite}
+        <IconButton size={1.5} iconName="heart" onClick={handleDelete} />
+      {:else}
+        <IconButton size={1.5} iconName="heart-o" onClick={handleAdd} />
       {/if}
+      <IconButton
+        size={1.5}
+        iconName="thumbs-up"
+        badge={showVoteCount && station.votes}
+        onClick={handleVote}
+      />
     </div>
   </div>
 </Card>
@@ -92,12 +113,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
   }
 
   .station-name {
     display: flex;
-    align-items: end;
+    align-items: center;
   }
 
   .station-info :global(.station-logo) {
@@ -115,14 +135,27 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
 
+  .station-detail {
+    margin-top: .5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .station-action {
+    display: flex;
+    margin-top: .5rem;
+  }
+
   .badge {
-    font-size: .6rem;
+    font-size: .8em;
     padding: .2rem;
     border-radius: 5px;
     background-color: var(--third-background);
+    margin-right: .2rem;
   }
 </style>

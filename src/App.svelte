@@ -8,7 +8,7 @@
   import SearchStation from './components/SearchStation.svelte';
 
   let isDrawerOpen = false;
-  let DrawerComponent;
+  let DrawerComponent = null;
 
   const handleOpenDrawer = (event) => {
     isDrawerOpen = !isDrawerOpen;
@@ -19,6 +19,10 @@
       // TODO
     }
   };
+
+  $: if (!isDrawerOpen) {
+    DrawerComponent = null;
+  }
 
 </script>
 

@@ -92,6 +92,10 @@
   </div>
 </div>
 
+<svelte:head>
+  <title>{$player.name ? `${CONFIG.APPNAME} - ${$player.name}` : CONFIG.APPNAME}</title>
+</svelte:head>
+
 <style>
   .player-container {
     border-radius: 10px;
@@ -118,18 +122,21 @@
     margin-left: 10px;
   }
 
-  .station-detail .title {
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-
-  .station-detail .song {
-    font-weight: 400;
+  .song, .title {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
+  }
+
+  .title {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .song {
+    font-weight: 400;
   }
 
   .player {

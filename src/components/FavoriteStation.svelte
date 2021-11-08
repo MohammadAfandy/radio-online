@@ -5,25 +5,30 @@
   import SearchInput from './UI/SearchInput.svelte';
 
   let stations = [];
+  let searchValue = '';
 
   onMount(async() => {
     stations = await favoriteStations.init();
   });
 
-  const handleSearch = async (event) => {
-    const { value: searchValue } = event.target;
-    if (searchValue.trim() !== '') {
-      stations = $favoriteStations.filter((station) => {
-        return station.name.toLowerCase().includes(searchValue.toLowerCase());
+  const filterStations = (stations, val) => {
+    let result = [];
+    if (val.trim() !== '') {
+      result = stations.filter((station) => {
+        return station.name.toLowerCase().includes(val.toLowerCase());
       });
     } else {
-      stations = $favoriteStations;
+      result = stations;
     }
+    return result;
   };
 
-  const handleDeleteFavorite = (event) => {
-    stations = stations.filter((station) => station.stationuuid !== event.detail.station.stationuuid);
+  const handleSearch = async (event) => {
+    searchValue = event.target.value;
+    stations = filterStations($favoriteStations, searchValue);
   };
+
+  $: stations = filterStations($favoriteStations, searchValue);
 
 </script>
 
@@ -39,8 +44,8 @@
     {#each stations as station (station.stationuuid)}
       <StationItem
         {station}
-        isFavorite={true}
-        on:delete={handleDeleteFavorite}
+        isFavorite
+        showVoteCount={false}
       />
     {/each}
   </div>
