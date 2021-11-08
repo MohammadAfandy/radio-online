@@ -4,4 +4,5 @@ export default {
     NAME: 'radio-sv',
     VERSION: 1,
   },
+  VOLUME_STEP: 20,
 };

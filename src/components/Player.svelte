@@ -6,6 +6,9 @@
   import { player } from '../stores';
   import { onInterval } from '../utils/interval';
   import { radioLise } from '../services/api';
+  import CONFIG from '../configs';
+
+  const { VOLUME_STEP } = CONFIG;
 
   const handleStop = () => {
     player.stop();
@@ -37,20 +40,26 @@
 
   const handleChangeVolume = (event) => {
     player.setVolume(event.target.value);
-  }
+  };
 
-  onInterval(async () => {
+  const updateStationSong = async () => {
     if ($player.url_resolved && $player.isPlaying) {
       const { data: song } = await radioLise.get('', {
         params: {
           url: $player.url_resolved,
         },
       });
-      if (song.title) {
-        $player.song = song.title;
-      }
+      player.updateSong(song.title);
     }
-  }, 20000);
+  };
+
+  onInterval(() => {
+    updateStationSong();
+  }, 20 * 1000);
+
+  $: stationuuid = $player.stationuuid;
+  $: stationuuid && updateStationSong();
+
 </script>
 
 <div class="player-container">
@@ -77,7 +86,7 @@
   </div>
   <div class="volume">
     <IconButton size={1} iconName="volume-off">
-      <input type="range" value={$player.volume} on:change={handleChangeVolume} min=0 max=20 />
+      <input type="range" value={$player.volume} on:change={handleChangeVolume} min=0 max={VOLUME_STEP} />
     </IconButton>
     <IconButton size={1} iconName="volume-up" />
   </div>

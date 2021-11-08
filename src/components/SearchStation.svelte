@@ -34,10 +34,10 @@
 </script>
 
 <div class="search-station">
-	<h1>Search Stations</h1>
+  <h1>Search Stations</h1>
   <div class="search">
     <SearchInput
-      placeholder="Search station"
+      placeholder="Search station by name"
       onInput={handleSearch}
     />
   </div>
@@ -65,7 +65,7 @@
 
   .list-wrapper {
     overflow: auto;
-    max-height: 550px;
+    max-height: 500px;
     padding: .5rem;
   }
 

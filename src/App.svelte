@@ -18,7 +18,7 @@
     } else {
       // TODO
     }
-  }
+  };
 
 </script>
 

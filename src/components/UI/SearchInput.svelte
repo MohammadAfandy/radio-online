@@ -5,11 +5,11 @@
 
   let timer;
   const debounce = (event) => {
-		clearTimeout(timer);
-		timer = setTimeout(() => {
-			onInput(event);
-		}, 750);
-	}
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      onInput(event);
+    }, 750);
+  };
 </script>
 
 <div class="search-input" style="font-size: {size}rem">

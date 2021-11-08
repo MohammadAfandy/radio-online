@@ -31,10 +31,10 @@
     });
   };
 
-  const handleErrorImage = (event) => {
-    event.target.onerror = null;
-    event.target.src = 'images/placeholder.jpg';
-  }
+  // const handleErrorImage = (event) => {
+  //   event.target.onerror = null;
+  //   event.target.src = 'images/placeholder.jpg';
+  // }
 </script>
 
 <Card>
@@ -58,7 +58,10 @@
     </div>
     <div class="station-detail">
       {#if station.country}
-        <span class="badge">{station.country + (station.state && `, ${station.state}`)}</span>
+        <span class="badge">{station.country}</span>
+      {/if}
+      {#if station.state}
+        <span class="badge">{station.state}</span>
       {/if}
       {#if station.tags}
         <span class="badge">{station.tags}</span>

@@ -7,12 +7,13 @@ const createFavoriteStations = () => {
   const getInitialData = async () => {
     const favorites = await FavoriteStationDB.getAll();
     set(favorites);
+    return favorites;
   };
 
   return {
     subscribe,
     init: async () => {
-      await getInitialData();
+      return getInitialData();
     },
     set: (stations) => {
       FavoriteStationDB.clear();

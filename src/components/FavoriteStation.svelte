@@ -4,27 +4,31 @@
   import { favoriteStations } from '../stores';
   import SearchInput from './UI/SearchInput.svelte';
 
+  let stations = [];
+
   onMount(async() => {
-    await favoriteStations.init();
-  })
+    stations = await favoriteStations.init();
+  });
 
   const handleSearch = async (event) => {
     const { value: searchValue } = event.target;
     if (searchValue.trim() !== '') {
       stations = $favoriteStations.filter((station) => {
-        return station.name.toLowerCase().includes(searchValue.toLowerCase())
+        return station.name.toLowerCase().includes(searchValue.toLowerCase());
       });
     } else {
       stations = $favoriteStations;
     }
   };
 
-  $: stations = $favoriteStations;
+  const handleDeleteFavorite = (event) => {
+    stations = stations.filter((station) => station.stationuuid !== event.detail.station.stationuuid);
+  };
 
 </script>
 
 <div class="favorite-station">
-	<h1>Favorite Stations ({$favoriteStations.length})</h1>
+  <h1>Favorite Stations ({$favoriteStations.length})</h1>
   <div class="search">
     <SearchInput
       placeholder="Search favorite station"
@@ -36,6 +40,7 @@
       <StationItem
         {station}
         isFavorite={true}
+        on:delete={handleDeleteFavorite}
       />
     {/each}
   </div>

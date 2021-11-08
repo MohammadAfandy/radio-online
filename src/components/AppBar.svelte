@@ -8,13 +8,13 @@
     dispatch('menu-click', {
       type: 'search',
     });
-  }
+  };
 
   const handleOpenSetting = () => {
     dispatch('menu-click', {
       type: 'setting',
     });
-  }
+  };
 </script>
 
 <header>
