@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import IconButton from './UI/IconButton.svelte';
+  import CONFIG from '../configs';
 
   const dispatch = createEventDispatcher();
 
@@ -21,7 +22,7 @@
   <nav>
     <div class="logo">
       <h1>
-        <a href="/">Radio Online</a>
+        <a href="/">{CONFIG.APPNAME}</a>
       </h1>
     </div>
     <div class="menu">

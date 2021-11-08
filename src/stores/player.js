@@ -46,6 +46,9 @@ const createPlayer = () => {
       // send click count to radiobrowser server
       radioBrowser.get(`url/${state.stationuuid}`);
 
+      // set last played to local storage
+      localStorage.setItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED, state.stationuuid);
+
       return {
         ...state,
         isPlaying: true,

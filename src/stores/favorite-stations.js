@@ -21,7 +21,7 @@ const createFavoriteStations = () => {
       return set(stations);
     },
     add: (station) => update((state) => {
-      const isExist = state.some((st) => st.stationuuid === station.uuid);
+      const isExist = state.some((st) => st.stationuuid === station.stationuuid);
       FavoriteStationDB.put(station);
       if (isExist) {
         return state;

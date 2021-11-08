@@ -27,7 +27,6 @@
     border: none;
     background: none;
     color: inherit;
-    padding: 5px;
   }
 
   .clickable {

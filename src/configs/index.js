@@ -5,4 +5,7 @@ export default {
     VERSION: 1,
   },
   VOLUME_STEP: 20,
+  LOCAL_STORAGE: {
+    LAST_PLAYED: 'last_played_station_uuid',
+  },
 };

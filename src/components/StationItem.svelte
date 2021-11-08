@@ -1,8 +1,8 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { fly } from 'svelte/transition';
-  import Image from 'svelte-image';
   import Card from './UI/Card.svelte';
+  import Image from './UI/Image.svelte';
   import IconButton from './UI/IconButton.svelte';
   import { player, favoriteStations } from '../stores';
   import { radioBrowser } from '../services/api';
@@ -39,24 +39,22 @@
       station,
     });
   };
-
-  // const handleErrorImage = (event) => {
-  //   event.target.onerror = null;
-  //   event.target.src = 'images/placeholder.jpg';
-  // }
 </script>
 
 <Card>
   <div class="station-item" on:click={handlePlay} transition:fly>
     <div class="station-info">
       <div class="station-name">
-        <Image
-          wrapperClass="station-logo"
-          src={station.favicon}
-          alt="Station logo {station.name}"
-          width={40}
-          height={40}
-        />
+        <div class="station-logo">
+          <Image
+            src={station.favicon}
+            alt="Station logo {station.name}"
+            width={40}
+            height={40}
+            fallbackSrc="images/placeholder.jpg"
+            rounded
+          />
+        </div>
         <span class="station-title">{station.name}</span>
       </div>
       {#if station.homepage}
@@ -120,13 +118,9 @@
     align-items: center;
   }
 
-  .station-info :global(.station-logo) {
-    background-color: #fff;
-    padding: .2rem;
-    width: 40px !important;
-    height: 40px !important;
-    min-height: initial !important;
-    margin-right: 10px;
+  /* .station-info :global(.station-logo) { */
+  .station-logo {
+    margin-right: 1rem;
     border-radius: 10px;
   }
 
@@ -152,10 +146,12 @@
   }
 
   .badge {
+    display: inline-block;
     font-size: .8em;
     padding: .2rem;
     border-radius: 5px;
     background-color: var(--third-background);
     margin-right: .2rem;
+    margin-bottom: .2rem;
   }
 </style>

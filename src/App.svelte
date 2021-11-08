@@ -3,7 +3,6 @@
   import Player from './components/Player.svelte';
   import FavoriteStation from './components/FavoriteStation.svelte';
   import Container from './components/UI/Container.svelte';
-  import Separator from './components/UI/Separator.svelte';
   import Drawer from './components/UI/Drawer.svelte';
   import SearchStation from './components/SearchStation.svelte';
 
@@ -33,7 +32,6 @@
   </Drawer>
   <Container {isDrawerOpen}>
     <Player />
-    <Separator />
     <FavoriteStation />
   </Container>
 </main>

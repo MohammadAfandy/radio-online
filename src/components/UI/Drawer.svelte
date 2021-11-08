@@ -30,7 +30,7 @@
     transform: translate(100%, 0);
     transition: transform 0.3s ease-in-out;
     overflow: auto;
-    z-index: 2;
+    z-index: 3;
   }
 
   .open {
