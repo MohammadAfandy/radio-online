@@ -2,17 +2,20 @@
 
 /* CSS Variables */
 :root {
-  --main-background: #FAFAFA;
-  --secondary-background: #F2F2F2;
-  /* --appbar-background: #F7F7F7; */
-  --font-color: #222222;
-  --primary-color: #EA7B0C;
-  --secondary-color: #ff9e2f;
-  --border-color: rgba(192, 192, 192, 0.9);
-  --shadow-color: rgba(0, 0, 0, 0.5);
   --appbar-height: 60px;
-  --skeleton-main-color: #ddd;
-  --skeleton-secondary-color: #e8e8e8;
+  --main-background: #161620;
+  --secondary-background: #20252F;
+  --third-background: #682A4A;
+  --fourth-background: #124e00;
+  --primary-color: #ADCAF2;
+  --secondary-color: #7093AF;
+  --shadow-color: rgba(19, 23, 30, 1);
+
+  --toastContainerTop: auto;
+  --toastContainerRight: auto;
+  --toastContainerBottom: 4rem;
+  --toastContainerLeft: calc(50vw - 9rem);
+  --toastWidth: 18rem;
 }
 
 /* Starter Configuration */
@@ -58,21 +61,12 @@ ul {
   list-style: none;
 }
 
-[data-theme="dark"] {
-  --main-background: #161620;
-  --secondary-background: #20252F;
-  --third-background: #682A4A;
-  --fourth-background: #124e00;
-  /* --appbar-background: #161620; */
-  /* --font-color: #7093AF; */
-  --primary-color: #ADCAF2;
-  --secondary-color: #7093AF;
-  --shadow-color: rgba(19, 23, 30, 1);
-  --skeleton-main-color: #383a3f ;
-  --skeleton-secondary-color: #43454b ;
-}
-
 @media screen and (min-width: 768px) {
+  :root {
+    --toastContainerLeft: calc(50vw - 18rem);
+    --toastWidth: 36rem;
+  }
+
   body, html {
     font-size: 16px;
   }

@@ -58,6 +58,14 @@
     player.setVolume(event.target.value);
   };
 
+  const handleVolumeMute = () => {
+    player.setVolume(0);
+  };
+
+  const handleVolumeFull = () => {
+    player.setVolume(VOLUME_STEP);
+  };
+
   const updateStationSong = async () => {
     if ($player.url_resolved && $player.isPlaying) {
       const { data: song } = await radioLise.get('', {
@@ -96,24 +104,24 @@
     </div>
   </div>
   <div class="player">
-    <IconButton size={1} iconName="step-backward" onClick={handlePrev} />
+    <IconButton iconName="step-backward" onClick={handlePrev} />
     {#if ($player.isPlaying)}
-      <IconButton size={1} iconName="stop" onClick={handleStop} />
+      <IconButton iconName="stop" onClick={handleStop} />
     {:else}
-      <IconButton size={1} iconName="play" onClick={handlePlay} />
+      <IconButton iconName="play" onClick={handlePlay} />
     {/if}
-    <IconButton size={1} iconName="step-forward" onClick={handleNext} />
+    <IconButton iconName="step-forward" onClick={handleNext} />
     <div class="volume">
-      <IconButton size={1} iconName="volume-off" />
+      <IconButton iconName="volume-off" onClick={handleVolumeMute} />
       <input type="range" value={$player.volume} on:change={handleChangeVolume} min=0 max={VOLUME_STEP} />
-      <IconButton size={1} iconName="volume-up" />
+      <IconButton iconName="volume-up" onClick={handleVolumeFull} />
     </div>
   </div>
   <Separator />
 </div>
 
 <svelte:head>
-  <title>{$player.name ? `${CONFIG.APPNAME} - ${$player.name}` : CONFIG.APPNAME}</title>
+  <title>{$player.stationuuid ? `${CONFIG.APPNAME} - ${$player.name}` : CONFIG.APPNAME}</title>
 </svelte:head>
 
 <style>

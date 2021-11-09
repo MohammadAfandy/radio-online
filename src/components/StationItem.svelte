@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { fly } from 'svelte/transition';
+  import { toast } from '@zerodevx/svelte-toast';
   import Card from './UI/Card.svelte';
   import Image from './UI/Image.svelte';
   import IconButton from './UI/IconButton.svelte';
@@ -12,6 +12,13 @@
   export let isFavorite = false;
   export let showVoteCount = false;
 
+  const generateFavoriteText = (action = 'add') => {
+    if (['add', 'remove'].includes(action) === false) {
+      throw new Error('Invalid action');
+    }
+    return `Success ${action} "${station.name}" ${action === 'add' ? 'to' : 'from'} favorite.`;
+  };
+
   const handlePlay = () => {
     player.setCurrentStation(station);
     player.play();
@@ -20,6 +27,7 @@
   const handleDelete = () => {
     favoriteStations.remove(station.stationuuid);
     isFavorite = false;
+    toast.push(generateFavoriteText('remove'));
     dispatch('delete', {
       station,
     });
@@ -28,13 +36,15 @@
   const handleAdd = () => {
     favoriteStations.add(station);
     isFavorite = true;
+    toast.push(generateFavoriteText('add'));
     dispatch('add', {
       station,
     });
   };
 
   const handleVote = async () => {
-    await radioBrowser.get(`vote/${station.stationuuid}`);
+    const { data: vote } = await radioBrowser.get(`vote/${station.stationuuid}`);
+    toast.push(vote.message || 'Something went wrong when upvoting station.');
     dispatch('vote', {
       station,
     });
@@ -42,7 +52,7 @@
 </script>
 
 <Card>
-  <div class="station-item" on:click={handlePlay} transition:fly>
+  <div class="station-item" on:click={handlePlay}>
     <div class="station-info">
       <div class="station-name">
         <div class="station-logo">
@@ -101,8 +111,6 @@
   .station-item {
     display: flex;
     flex-direction: column;
-    /* justify-content: space-between; */
-    /* align-items: center; */
     padding: .3rem 2rem;
     cursor: pointer;
   }

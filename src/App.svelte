@@ -1,4 +1,5 @@
 <script>
+  import { SvelteToast } from '@zerodevx/svelte-toast';
   import AppBar from './components/AppBar.svelte';
   import Player from './components/Player.svelte';
   import FavoriteStation from './components/FavoriteStation.svelte';
@@ -26,7 +27,7 @@
 </script>
 
 <main>
-  <AppBar on:menu-click={handleOpenDrawer} />
+  <AppBar on:menu-click={handleOpenDrawer} {isDrawerOpen} />
   <Drawer bind:isOpen={isDrawerOpen}>
     <svelte:component this={DrawerComponent}/>
   </Drawer>
@@ -34,10 +35,12 @@
     <Player />
     <FavoriteStation />
   </Container>
+  <SvelteToast options={{ reversed: true, intro: { y: 192 } }} />
 </main>
 
 <style>
   main {
     position: relative;
   }
+
 </style>

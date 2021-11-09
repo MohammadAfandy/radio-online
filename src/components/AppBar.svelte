@@ -3,19 +3,27 @@
   import IconButton from './UI/IconButton.svelte';
   import CONFIG from '../configs';
 
+  export let isDrawerOpen;
+  let showedDrawer;
+
   const dispatch = createEventDispatcher();
 
   const handleOpenSearch = () => {
+    showedDrawer = 'search';
     dispatch('menu-click', {
       type: 'search',
     });
   };
 
   const handleOpenSetting = () => {
+    showedDrawer = 'setting';
     dispatch('menu-click', {
       type: 'setting',
     });
   };
+
+  $: iconSearch = isDrawerOpen && showedDrawer === 'search' ? 'times' : 'search';
+  $: iconSetting = isDrawerOpen && showedDrawer === 'setting' ? 'times' : 'bars';
 </script>
 
 <header>
@@ -26,8 +34,8 @@
       </h1>
     </div>
     <div class="menu">
-      <IconButton size={1.5} iconName="search" onClick={handleOpenSearch} />
-      <IconButton size={1.5} iconName="bars" onClick={handleOpenSetting} />
+      <IconButton size={1.5} iconName={iconSearch} onClick={handleOpenSearch} />
+      <IconButton size={1.5} iconName={iconSetting} onClick={handleOpenSetting} />
     </div>
   </nav>
 </header>

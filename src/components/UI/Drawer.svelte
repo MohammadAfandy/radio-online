@@ -1,9 +1,14 @@
 <script>
-  import IconButton from './IconButton.svelte';
   export let isOpen = false;
 
+  const handleKeydown = (event) => {
+    if (event.key === 'Escape') {
+      if (isOpen) isOpen = false;
+    }
+  };
+
   let body = document.body;
-  $: if (isOpen ) {
+  $: if (isOpen) {
     body.style.overflow = 'hidden';
   } else {
     body.style.overflow = null;
@@ -12,11 +17,10 @@
 </script>
 
 <div class="drawer" class:open={isOpen}>
-  <div class="close-button">
-    <IconButton iconName="times" size={2} onClick={() => isOpen = false} />
-  </div>
   <slot></slot>
 </div>
+
+<svelte:window on:keydown={handleKeydown}/>
 
 <style>
   .drawer {
@@ -35,10 +39,5 @@
 
   .open {
     transform: translate(0, 0);
-  }
-
-  .close-button {
-    display: flex;
-    flex-direction: row-reverse;
   }
 </style>
