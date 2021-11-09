@@ -4,6 +4,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
+import { injectManifest } from 'rollup-plugin-workbox';
+import replace from '@rollup/plugin-replace';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -28,7 +30,25 @@ function serve() {
   };
 }
 
-export default {
+export default [{
+  input: 'src/sw.js',
+  output: {
+    format: 'iife',
+    name: 'sw',
+    file: 'public/build/sw.bundle.js',
+  },
+  plugins: [
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      'preventAssignment': true,
+    }),
+    resolve({
+      browser: true,
+    }),
+    commonjs(),
+    terser(),
+  ],
+}, {
   input: 'src/main.js',
   output: {
     sourcemap: true,
@@ -69,8 +89,14 @@ export default {
     // If we're building for production (npm run build
     // instead of npm run dev), minify
     production && terser(),
+    injectManifest({
+      swSrc: 'public/build/sw.bundle.js',
+      swDest: 'public/sw.js',
+      globDirectory: 'public/',
+      // mode: 'production',
+    }),
   ],
   watch: {
     clearScreen: false,
   },
-};
+}];
