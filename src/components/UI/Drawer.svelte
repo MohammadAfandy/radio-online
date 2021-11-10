@@ -26,9 +26,9 @@
   .drawer {
     position: fixed;
     width: 100%;
-    height: 100%;
+    height: calc(100% - var(--appbar-height));
     top: var(--appbar-height);
-    overflow: hidden;
+    overflow: auto;
     background-color: var(--secondary-background);
     padding: 1rem;
     transform: translate(100%, 0);

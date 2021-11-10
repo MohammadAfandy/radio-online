@@ -47,7 +47,7 @@ const createPlayer = () => {
       radioBrowser.get(`url/${state.stationuuid}`);
 
       // set last played to local storage
-      localStorage.setItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED, state.stationuuid);
+      localStorage.setItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED, JSON.stringify(state));
 
       return {
         ...state,

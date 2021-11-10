@@ -23,7 +23,7 @@
   };
 
   $: iconSearch = isDrawerOpen && showedDrawer === 'search' ? 'times' : 'search';
-  $: iconSetting = isDrawerOpen && showedDrawer === 'setting' ? 'times' : 'bars';
+  $: iconSetting = isDrawerOpen && showedDrawer === 'setting' ? 'times' : 'cog';
 </script>
 
 <header>

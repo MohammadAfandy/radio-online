@@ -6,23 +6,16 @@
   import { favoriteStations } from '../stores';
   import { player } from '../stores';
   import { onInterval } from '../utils/interval';
-  import { radioBrowser, radioLise } from '../services/api';
+  import { safeJSONParse } from '../utils/helpers';
+  import { radioLise } from '../services/api';
   import CONFIG from '../configs';
 
   const { VOLUME_STEP } = CONFIG;
 
-  onMount(async () => {
-    const getLastPlayedStation = localStorage.getItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED);
-    if (getLastPlayedStation) {
-      const { data: currentStation } = await radioBrowser.get('stations/byuuid', {
-        params: {
-          uuids: getLastPlayedStation,
-        },
-      });
-
-      if (currentStation.length) {
-        player.setCurrentStation(currentStation[0]);
-      }
+  onMount(() => {
+    const lastPlayedStation = safeJSONParse(localStorage.getItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED));
+    if (lastPlayedStation && lastPlayedStation.stationuuid) {
+      player.setCurrentStation(lastPlayedStation);
     }
   });
 

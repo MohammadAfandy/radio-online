@@ -3,6 +3,7 @@
   import StationItem from './StationItem.svelte';
   import { favoriteStations } from '../stores';
   import SearchInput from './UI/SearchInput.svelte';
+  import IconButton from './UI/IconButton.svelte';
 
   let stations = [];
   let searchValue = '';
@@ -34,21 +35,27 @@
 
 <div class="favorite-station">
   <h1>Favorite Stations ({$favoriteStations.length})</h1>
-  <div class="search">
-    <SearchInput
-      placeholder="Search favorite station"
-      onInput={handleSearch}
-    />
-  </div>
-  <div class="list-wrapper">
-    {#each stations as station (station.stationuuid)}
-      <StationItem
-        {station}
-        isFavorite
-        showVoteCount={false}
+  {#if stations.length}
+    <div class="search">
+      <SearchInput
+        placeholder="Search favorite station"
+        onInput={handleSearch}
       />
-    {/each}
-  </div>
+    </div>
+    <div class="list-wrapper">
+      {#each stations as station (station.stationuuid)}
+        <StationItem
+          {station}
+          isFavorite
+          showVoteCount={false}
+        />
+      {/each}
+    </div>
+  {:else}
+    <IconButton iconName="frown">
+      You don't have any favorite stations.
+    </IconButton>
+  {/if}
 </div>
 
 <style>

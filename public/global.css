@@ -43,7 +43,7 @@ body {
   color: var(--primary-color);
 }
 
-a, button, input, textarea {
+button, input, textarea {
   display: inline-block;
   box-sizing: border-box;
   min-width: 44px;
@@ -59,6 +59,26 @@ a {
 
 ul {
   list-style: none;
+}
+
+::-webkit-scrollbar {
+  width: 1rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #7775;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #777;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #5555;
+}
+
+::-webkit-scrollbar-track:hover {
+  background-color: #555;
 }
 
 @media screen and (min-width: 768px) {

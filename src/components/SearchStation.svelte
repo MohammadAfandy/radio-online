@@ -1,17 +1,21 @@
 <script>
   import { onMount } from 'svelte';
   import { Shadow } from 'svelte-loading-spinners';
+  import { showToast } from '../utils/toast';
   import StationItem from './StationItem.svelte';
   import { radioBrowser } from '../services/api';
   import { favoriteStations } from '../stores';
   import SearchInput from './UI/SearchInput.svelte';
   import SelectInput from './UI/SelectInput.svelte';
+  import IconButton from './UI/IconButton.svelte';
 
+  const limitStations = 20;
   let searchParams = {};
   let countries = [];
   let searchedStations = [];
-  let notFound = false;
+  let newStations = [];
   let isLoading = false;
+  let hasMore = false;
 
   onMount(async () => {
     fetchSearchStations();
@@ -22,32 +26,45 @@
     }));
   });
 
-  const fetchSearchStations = async (additionalParams = {}) => {
+  const fetchSearchStations = async (additionalParams = {}, isReset = false) => {
     searchParams = {
       ...searchParams,
       ...additionalParams,
-      limit: 20,
+      limit: limitStations,
       order: 'votes',
       reverse: true,
       hideBroken: true,
     };
+    if (isReset) {
+      searchedStations = [];
+      newStations = [];
+      searchParams.offset = 0;
+    }
+
     isLoading = true;
     try {
       const { data: stations } = await radioBrowser.get('stations/search', {
         params: searchParams,
       });
-      if (stations.length > 0) {
-        const favoriteStationsUuid = $favoriteStations.map((station) => station.stationuuid);
-        searchedStations = stations.map((station) => ({
-          ...station,
-          isFavorite: favoriteStationsUuid.includes(station.stationuuid),
-        }));
-        notFound = false;
+      const favoriteStationsUuid = $favoriteStations.map((station) => station.stationuuid);
+      const fetchStations = stations.map((station) => ({
+        ...station,
+        isFavorite: favoriteStationsUuid.includes(station.stationuuid),
+      }));
+      if (fetchStations.length < limitStations) {
+        hasMore = false;
       } else {
-        notFound = true;
+        hasMore = true;
+      }
+
+      if (isReset) {
+        searchedStations = fetchStations;
+      } else {
+        newStations = fetchStations;
       }
     } catch (error) {
       console.error(error);
+      showToast(error.message, 'danger');
     } finally {
       isLoading = false;
     }
@@ -57,7 +74,7 @@
     const { value: SearchValue } = event.target;
     await fetchSearchStations({
       name: SearchValue,
-    });
+    }, true);
   };
 
   const handleCountryChange = async (event) => {
@@ -66,8 +83,20 @@
     await fetchSearchStations({
       country,
       countryExact,
+    }, true);
+  };
+
+  const handleLoadMore = async () => {
+    const { offset = 0 } = searchParams;
+    await fetchSearchStations({
+      offset: offset + limitStations,
     });
   };
+
+  $: searchedStations = [
+    ...searchedStations,
+    ...newStations,
+  ];
 
 </script>
 
@@ -86,23 +115,35 @@
       />
     </div>
   </div>
+
   <div class="list-wrapper">
+    {#if searchedStations.length}
+      {#each searchedStations as searchedStation (searchedStation.stationuuid)}
+        <StationItem
+          station={searchedStation}
+          isFavorite={searchedStation.isFavorite}
+          showVoteCount
+        />
+      {/each}
+    {:else}
+      {#if !isLoading}
+        <IconButton iconName="frown">
+          Sorry, no stations found.
+        </IconButton>
+      {/if}
+    {/if}
+
     {#if isLoading}
       <div class="loader">
-        <Shadow size="4" color="#f0f0f0" unit="rem" duration="1s" />
+        <Shadow size="2" color="#f0f0f0" unit="rem" duration="1s" />
       </div>
     {:else}
-      {#if notFound}
-        <i class="fa fa-frown" aria-hidden="true"></i>
-        <span>Sorry, no stations found</span>
-      {:else}
-        {#each searchedStations as searchedStation (searchedStation.stationuuid)}
-          <StationItem
-            station={searchedStation}
-            isFavorite={searchedStation.isFavorite}
-            showVoteCount
-          />
-        {/each}
+      {#if searchedStations.length >= 0 && hasMore}
+        <div class="load-more">
+          <IconButton iconName="chevron-down" size={1.5} onClick={handleLoadMore}>
+            Load More
+          </IconButton>
+        </div>
       {/if}
     {/if}
   </div>
@@ -116,8 +157,6 @@
   }
 
   .list-wrapper {
-    overflow: auto;
-    height: 60vh;
     padding: .5rem;
   }
 
@@ -134,10 +173,16 @@
   h1 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
+    text-align: center;
   }
 
   .advanced-search {
     margin: .5rem 0;
     max-width: 400px;
+  }
+
+  .load-more {
+    display: flex;
+    justify-content: center;
   }
 </style>

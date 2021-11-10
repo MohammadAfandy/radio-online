@@ -6,6 +6,7 @@ export default {
   },
   VOLUME_STEP: 20,
   LOCAL_STORAGE: {
-    LAST_PLAYED: 'last_played_station_uuid',
+    LAST_PLAYED: 'last_played_station',
   },
+  GITHUB_URL: 'https://github.com/MohammadAfandy/radio-online',
 };

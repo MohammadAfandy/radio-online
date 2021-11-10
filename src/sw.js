@@ -38,7 +38,9 @@ registerRoute(
 registerRoute(
   ({ url }) => (
     url.origin.endsWith('api.radio-browser.info')
-    && url.pathname === '/json/countries'
+    && (
+      url.pathname === '/json/countries'
+    )
   ),
   new CacheFirst({
     cacheName: `${APPNAME}-radio-browser-cache`,
@@ -54,6 +56,10 @@ registerRoute(
 registerRoute(
   ({ url }) => (
     url.origin.endsWith('api.radio-browser.info')
+    && (
+      url.pathname.startsWith('/json/vote/') === false
+      && url.pathname.startsWith('/json/url/') === false
+    )
   ),
   new NetworkFirst({
     cacheName: `${APPNAME}-radio-browser-network`,

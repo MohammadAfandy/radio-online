@@ -6,6 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
 import { injectManifest } from 'rollup-plugin-workbox';
 import replace from '@rollup/plugin-replace';
+import del from 'rollup-plugin-delete';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -47,6 +48,16 @@ export default [{
     }),
     commonjs(),
     terser(),
+    injectManifest({
+      swSrc: 'public/build/sw.bundle.js',
+      swDest: 'public/sw.js',
+      globDirectory: 'public/',
+      // mode: 'production',
+    }),
+    del({
+      targets: 'public/build/sw.bundle.js',
+      hook: 'buildEnd',
+    }),
   ],
 }, {
   input: 'src/main.js',
@@ -89,11 +100,10 @@ export default [{
     // If we're building for production (npm run build
     // instead of npm run dev), minify
     production && terser(),
-    injectManifest({
-      swSrc: 'public/build/sw.bundle.js',
-      swDest: 'public/sw.js',
-      globDirectory: 'public/',
-      // mode: 'production',
+
+    del({
+      targets: 'public/build/*',
+      runOnce: true,
     }),
   ],
   watch: {

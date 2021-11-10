@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { toast } from '@zerodevx/svelte-toast';
+  import { showToast } from '../utils/toast';
   import Card from './UI/Card.svelte';
   import Image from './UI/Image.svelte';
   import IconButton from './UI/IconButton.svelte';
@@ -27,7 +27,7 @@
   const handleDelete = () => {
     favoriteStations.remove(station.stationuuid);
     isFavorite = false;
-    toast.push(generateFavoriteText('remove'));
+    showToast(generateFavoriteText('remove'));
     dispatch('delete', {
       station,
     });
@@ -36,7 +36,7 @@
   const handleAdd = () => {
     favoriteStations.add(station);
     isFavorite = true;
-    toast.push(generateFavoriteText('add'));
+    showToast(generateFavoriteText('add'));
     dispatch('add', {
       station,
     });
@@ -44,7 +44,11 @@
 
   const handleVote = async () => {
     const { data: vote } = await radioBrowser.get(`vote/${station.stationuuid}`);
-    toast.push(vote.message || 'Something went wrong when upvoting station.');
+    if (vote.ok) {
+      showToast(`Vote for "${station.name}" success`, 'success');
+    } else {
+      showToast(vote.message || `Vote for "${station.name}" failed`, 'danger');
+    }
     dispatch('vote', {
       station,
     });
@@ -74,13 +78,6 @@
       {/if}
     </div>
     <div class="station-detail">
-      {#if station.tags}
-        {#each station.tags.split(',').slice(0, 3) as tag}
-          <span class="badge">
-            {tag}
-          </span>
-        {/each}
-      {/if}
       {#if station.country}
         <span class="badge">{station.country}</span>
       {/if}
@@ -89,6 +86,13 @@
       {/if}
       {#if station.bitrate}
         <span class="badge">{station.bitrate} kbps</span>
+      {/if}
+      {#if station.tags}
+        {#each station.tags.split(',').slice(0, 3) as tag}
+          <span class="badge">
+            {tag}
+          </span>
+        {/each}
       {/if}
     </div>
     <div class="station-action">
@@ -100,7 +104,7 @@
       <IconButton
         size={1.5}
         iconName="thumbs-up"
-        badge={showVoteCount && station.votes}
+        badge={showVoteCount && Number(station.votes).toLocaleString()}
         onClick={handleVote}
       />
     </div>
