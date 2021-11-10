@@ -11,7 +11,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^11.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.6",
     "@zerodevx/svelte-toast": "^0.6.2",
     "eslint": "^8.1.0",
     "eslint-plugin-svelte3": "^3.2.1",
