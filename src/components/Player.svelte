@@ -87,7 +87,7 @@
         alt="Station logo {$player.name}"
         width={50}
         height={50}
-        fallbackSrc="images/placeholder.jpg"
+        fallbackSrc="/images/placeholder.jpg"
         rounded
       />
     </div>

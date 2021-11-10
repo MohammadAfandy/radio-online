@@ -65,7 +65,7 @@
             alt="Station logo {station.name}"
             width={40}
             height={40}
-            fallbackSrc="images/placeholder.jpg"
+            fallbackSrc="/images/placeholder.jpg"
             rounded
           />
         </div>
