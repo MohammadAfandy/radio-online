@@ -3,3 +3,5 @@
 /public/sw.js
 
 .DS_Store
+
+.vercel
