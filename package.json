@@ -15,7 +15,7 @@
     "@zerodevx/svelte-toast": "^0.6.2",
     "eslint": "^8.2.0",
     "eslint-plugin-svelte3": "^3.2.1",
-    "rollup": "^2.3.4",
+    "rollup": "^2.60.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-livereload": "^2.0.0",
