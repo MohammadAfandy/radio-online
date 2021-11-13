@@ -8,17 +8,29 @@
   import SearchInput from './UI/SearchInput.svelte';
   import SelectInput from './UI/SelectInput.svelte';
   import IconButton from './UI/IconButton.svelte';
+  import CONFIG from '../configs';
 
-  const limitStations = 20;
+  const { LOCAL_STORAGE } = CONFIG;
+
+  // svelte-ignore unused-export-let
+  export let DrawerComponent;
+
+  const limitStations = 18;
   let searchParams = {};
   let countries = [];
   let searchedStations = [];
   let newStations = [];
   let isLoading = false;
   let hasMore = false;
+  let defaultCountry = '';
 
   onMount(async () => {
-    fetchSearchStations();
+    defaultCountry = localStorage.getItem(LOCAL_STORAGE.COUNTRY) || '';
+    fetchSearchStations({
+      country: defaultCountry,
+      countryExact: defaultCountry !== '',
+    });
+
     const { data: countryList } = await radioBrowser.get('countries');
     countries = countryList.map(({ name }) => ({
       val: name,
@@ -79,10 +91,9 @@
 
   const handleCountryChange = async (event) => {
     const { value: country } = event.target;
-    const countryExact = country !== '';
     await fetchSearchStations({
       country,
-      countryExact,
+      countryExact: country !== '',
     }, true);
   };
 
@@ -112,6 +123,7 @@
         emptyText="-- All Country --"
         items={countries}
         onChange={handleCountryChange}
+        selected={defaultCountry}
       />
     </div>
   </div>
@@ -132,21 +144,21 @@
         </IconButton>
       {/if}
     {/if}
-
-    {#if isLoading}
-      <div class="loader">
-        <Shadow size="2" color="#f0f0f0" unit="rem" duration="1s" />
-      </div>
-    {:else}
-      {#if searchedStations.length >= 0 && hasMore}
-        <div class="load-more">
-          <IconButton iconName="chevron-down" size={1.5} onClick={handleLoadMore}>
-            Load More
-          </IconButton>
-        </div>
-      {/if}
-    {/if}
   </div>
+
+  {#if isLoading}
+    <div class="loader">
+      <Shadow size="2" color="#f0f0f0" unit="rem" duration="1s" />
+    </div>
+  {:else}
+    {#if searchedStations.length >= 0 && hasMore}
+      <div class="load-more">
+        <IconButton iconName="chevron-down" size={1.5} onClick={handleLoadMore}>
+          Load More
+        </IconButton>
+      </div>
+    {/if}
+  {/if}
 </div>
 
 <style>
@@ -157,7 +169,9 @@
   }
 
   .list-wrapper {
-    padding: .5rem;
+    /* padding: .5rem; */
+    display: grid;
+    gap: 0 1rem;
   }
 
   .search {
@@ -184,5 +198,17 @@
   .load-more {
     display: flex;
     justify-content: center;
+  }
+
+  @media screen and (min-width: 768px) {
+    .list-wrapper {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    .list-wrapper {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 </style>

@@ -67,6 +67,11 @@
     background-color: var(--secondary-background);
   }
 
+  .list-wrapper {
+    display: grid;
+    gap: 0 1rem;
+  }
+
   .search {
     margin-bottom: 1rem;
   }
@@ -74,5 +79,17 @@
   h1 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
+  }
+
+  @media screen and (min-width: 768px) {
+    .list-wrapper {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    .list-wrapper {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 </style>

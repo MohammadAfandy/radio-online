@@ -3,12 +3,14 @@
   export let emptyText = '';
   export let size = 1;
   export let items = [];
+  export let selected;
 
 </script>
 
 <select
   class="select-input"
   style="font-size: {size}rem"
+  bind:value={selected}
   on:change={onChange}
 >
   {#if emptyText}

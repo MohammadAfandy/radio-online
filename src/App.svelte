@@ -32,7 +32,7 @@
   <Drawer bind:isOpen={isDrawerOpen}>
     <svelte:component this={DrawerComponent} bind:DrawerComponent />
   </Drawer>
-  <Container {isDrawerOpen}>
+  <Container>
     <Player />
     <FavoriteStation />
   </Container>

@@ -29,7 +29,7 @@ const createPlayer = () => {
       url,
       url_resolved,
     }) => update((state) => {
-      return {
+      const station = {
         ...state,
         stationuuid,
         name,
@@ -37,7 +37,13 @@ const createPlayer = () => {
         url,
         url_resolved,
         song: initialData.song,
+        isPlaying: false,
       };
+
+      // set last played to local storage
+      localStorage.setItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED, JSON.stringify(station));
+
+      return station;
     }),
     play: (url) => update((state) => {
       url = url || state.url_resolved || state.url;
@@ -45,9 +51,6 @@ const createPlayer = () => {
 
       // send click count to radiobrowser server
       radioBrowser.get(`url/${state.stationuuid}`);
-
-      // set last played to local storage
-      localStorage.setItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED, JSON.stringify(state));
 
       return {
         ...state,
@@ -62,6 +65,7 @@ const createPlayer = () => {
       };
     }),
     setVolume: (volume) => update((state) => {
+      localStorage.setItem(CONFIG.LOCAL_STORAGE.VOLUME, volume);
       myAudio.setVolume(volume / VOLUME_STEP);
       return {
         ...state,

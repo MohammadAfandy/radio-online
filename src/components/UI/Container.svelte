@@ -1,9 +1,7 @@
 <script>
-  export let isDrawerOpen = false;
-
 </script>
 
-<div class="container" class:hidden={isDrawerOpen}>
+<div class="container">
   <slot></slot>
 </div>
 
@@ -12,10 +10,6 @@
     position: relative;
     background-color: var(--main-background);
     margin-top: var(--appbar-height);
-  }
-  
-  .hidden {
-    /* display: none; */
   }
 
   @media screen and (min-width: 768px) {

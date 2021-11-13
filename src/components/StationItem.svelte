@@ -53,6 +53,11 @@
       station,
     });
   };
+
+  $: image = ($player.isPlaying && $player.stationuuid === station.stationuuid)
+    ? '/images/equalizer.gif'
+    : station.favicon;
+
 </script>
 
 <Card>
@@ -61,7 +66,7 @@
       <div class="station-name">
         <div class="station-logo">
           <Image
-            src={station.favicon}
+            src={image}
             alt="Station logo {station.name}"
             width={40}
             height={40}
@@ -69,7 +74,7 @@
             rounded
           />
         </div>
-        <span class="station-title">{station.name}</span>
+        <span class="station-title" id="station_title">{station.name}</span>
       </div>
       {#if station.homepage}
         <a href={station.homepage} ref="noreferrer" target="_blank">
@@ -88,7 +93,7 @@
         <span class="badge">{station.bitrate} kbps</span>
       {/if}
       {#if station.tags}
-        {#each station.tags.split(',').slice(0, 3) as tag}
+        {#each station.tags.split(',').slice(0, 2) as tag}
           <span class="badge">
             {tag}
           </span>
@@ -115,7 +120,9 @@
   .station-item {
     display: flex;
     flex-direction: column;
-    padding: .3rem 2rem;
+    justify-content: space-between;
+    height: 100%;
+    padding: .3rem 1rem;
     cursor: pointer;
   }
 
@@ -149,7 +156,8 @@
     margin-top: .5rem;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
+    min-height: 3rem;
   }
 
   .station-action {

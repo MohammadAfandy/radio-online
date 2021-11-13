@@ -1,14 +1,25 @@
 <script>
+  import Setting from './Setting.svelte';
   import IconButton from './UI/IconButton.svelte';
   import CONFIG from '../configs';
+
+  export let DrawerComponent;
+  
+  const handleBackSetting = () => {
+    DrawerComponent = Setting;
+  };
 
   const handleOpenGithub = () => {
     window.open(CONFIG.GITHUB_URL);
   };
 
+
 </script>
 
 <div class="about">
+  <IconButton iconName="chevron-left" onClick={handleBackSetting}>
+    Back to setting
+  </IconButton>
   <h1>{CONFIG.APPNAME}</h1>
   <p>
     {CONFIG.APPNAME} is a free application to stream radio from around the world.

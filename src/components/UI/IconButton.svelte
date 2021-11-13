@@ -50,4 +50,11 @@
     background: var(--fourth-background);
     text-align: center;
   }
+
+  @media(hover: hover) {    
+    button:hover {
+      opacity: .5;
+    }
+  }
+
 </style>

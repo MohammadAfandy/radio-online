@@ -7,6 +7,8 @@ export default {
   VOLUME_STEP: 20,
   LOCAL_STORAGE: {
     LAST_PLAYED: 'last_played_station',
+    COUNTRY: 'country',
+    VOLUME: 'volume',
   },
   GITHUB_URL: 'https://github.com/MohammadAfandy/radio-online',
 };

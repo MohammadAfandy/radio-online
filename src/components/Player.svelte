@@ -17,6 +17,9 @@
     if (lastPlayedStation && lastPlayedStation.stationuuid) {
       player.setCurrentStation(lastPlayedStation);
     }
+
+    const volume = localStorage.getItem(CONFIG.LOCAL_STORAGE.VOLUME);
+    if (volume) player.setVolume(volume);
   });
 
   const handleStop = () => {
@@ -60,23 +63,28 @@
   };
 
   const updateStationSong = async () => {
-    if ($player.url_resolved && $player.isPlaying) {
+    if ($player.isPlaying && ($player.url_resolved || $player.url)) {
       const { data: song } = await radioLise.get('', {
         params: {
-          url: $player.url_resolved,
+          url: $player.url_resolved || $player.url,
         },
       });
       player.updateSong(song.title);
     }
   };
 
-  onInterval(() => {
+  let intervalSong;
+  const createIntervalSong = () => {
+    if (intervalSong) clearInterval(intervalSong);
+    intervalSong = onInterval(() => {
+      updateStationSong();
+    }, 20 * 1000);
+  };
+
+  $: if ($player.stationuuid) {
     updateStationSong();
-  }, 20 * 1000);
-
-  $: stationuuid = $player.stationuuid;
-  $: stationuuid && updateStationSong();
-
+    createIntervalSong();
+  }
 </script>
 
 <div class="player-container">
