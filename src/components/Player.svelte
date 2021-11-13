@@ -81,10 +81,16 @@
     }, 20 * 1000);
   };
 
-  $: if ($player.stationuuid) {
+  const updateSongAndInterval = () => {
     updateStationSong();
     createIntervalSong();
+  };
+
+  $: stationuuid = $player.stationuuid;
+  $: if (stationuuid) {
+    updateSongAndInterval();
   }
+
 </script>
 
 <div class="player-container">
