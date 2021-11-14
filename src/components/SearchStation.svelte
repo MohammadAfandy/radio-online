@@ -5,6 +5,7 @@
   import StationItem from './StationItem.svelte';
   import { radioBrowser } from '../services/api';
   import { favoriteStations } from '../stores';
+  import LocalStorage from '../utils/local-storage';
   import SearchInput from './UI/SearchInput.svelte';
   import SelectInput from './UI/SelectInput.svelte';
   import IconButton from './UI/IconButton.svelte';
@@ -25,7 +26,7 @@
   let defaultCountry = '';
 
   onMount(async () => {
-    defaultCountry = localStorage.getItem(LOCAL_STORAGE.COUNTRY) || '';
+    defaultCountry = LocalStorage.get(LOCAL_STORAGE.COUNTRY) || '';
     fetchSearchStations({
       country: defaultCountry,
       countryExact: defaultCountry !== '',

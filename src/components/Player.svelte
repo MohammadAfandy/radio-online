@@ -1,25 +1,32 @@
 <script>
   import { onMount } from 'svelte';
+  import moment from 'moment';
   import Separator from './UI/Separator.svelte';
   import IconButton from './UI/IconButton.svelte';
   import Image from './UI/Image.svelte';
   import { favoriteStations } from '../stores';
   import { player } from '../stores';
   import { onInterval } from '../utils/interval';
-  import { safeJSONParse } from '../utils/helpers';
+  import LocalStorage from '../utils/local-storage';
   import { radioLise } from '../services/api';
   import CONFIG from '../configs';
 
   const { VOLUME_STEP } = CONFIG;
+  const MAX_LAST_SONGS = 50;
+
+  let isShowLastSongs = false;
+  let lastSongs = [];
 
   onMount(() => {
-    const lastPlayedStation = safeJSONParse(localStorage.getItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED));
+    const lastPlayedStation = LocalStorage.get(CONFIG.LOCAL_STORAGE.LAST_STATION);
     if (lastPlayedStation && lastPlayedStation.stationuuid) {
       player.setCurrentStation(lastPlayedStation);
     }
 
-    const volume = localStorage.getItem(CONFIG.LOCAL_STORAGE.VOLUME);
-    if (volume) player.setVolume(volume);
+    const volume = LocalStorage.get(CONFIG.LOCAL_STORAGE.VOLUME);
+    if (!isNaN(volume)) player.setVolume(volume);
+
+    lastSongs = LocalStorage.get(CONFIG.LOCAL_STORAGE.LAST_SONGS) || [];
   });
 
   const handleStop = () => {
@@ -62,6 +69,10 @@
     player.setVolume(VOLUME_STEP);
   };
 
+  const handleOpenLastSongs = () => {
+    isShowLastSongs = !isShowLastSongs;
+  };
+
   const updateStationSong = async () => {
     if ($player.isPlaying && ($player.url_resolved || $player.url)) {
       const { data: song } = await radioLise.get('', {
@@ -69,7 +80,32 @@
           url: $player.url_resolved || $player.url,
         },
       });
-      player.updateSong(song.title);
+
+      const { title } = song;
+      if (title) {
+        player.updateSong(title);
+
+        const songData = {
+          station: $player.name,
+          title,
+          date: new Date(),
+        };
+
+        const currentLastSongs = LocalStorage.get(CONFIG.LOCAL_STORAGE.LAST_SONGS) || [];
+        if (currentLastSongs.length) {
+          // don't add if song title and station is same as last song data
+          const lastData = currentLastSongs[0];
+          if (lastData.station === songData.station && lastData.title === songData.title) {
+            return;
+          }
+        }
+
+        lastSongs = [songData, ...currentLastSongs];
+        if (lastSongs.length > MAX_LAST_SONGS) {
+          lastSongs.splice(MAX_LAST_SONGS - lastSongs.length);
+        }
+        LocalStorage.set(CONFIG.LOCAL_STORAGE.LAST_SONGS, lastSongs);
+      }
     }
   };
 
@@ -109,6 +145,9 @@
       <span class="title">{$player.name}</span>
       <span class="song">{$player.song}</span>
     </div>
+    <div class="last-songs-button">
+      <IconButton iconName="history" size={1.5} onClick={handleOpenLastSongs} />
+    </div>
   </div>
   <div class="player">
     <IconButton iconName="step-backward" onClick={handlePrev} />
@@ -123,6 +162,24 @@
       <input type="range" value={$player.volume} on:change={handleChangeVolume} min=0 max={VOLUME_STEP} />
       <IconButton iconName="volume-up" onClick={handleVolumeFull} />
     </div>
+  </div>
+  <Separator />
+</div>
+
+<div class="last-songs-container" class:show={isShowLastSongs}>
+  <h2>Last {MAX_LAST_SONGS} Songs Played</h2>
+  <div class="last-songs-wrapper">
+    {#each lastSongs as lastSong, idx (idx)}
+      <div class="last-songs-item">
+        <div class="last-songs-detail">
+          <div class="song">{lastSong.title}</div>
+          <div class="title">{lastSong.station}</div>
+        </div>
+        <div class="last-songs-date">
+          <span>{moment(lastSong.date).fromNow()}</span>
+        </div>
+      </div>
+    {/each}
   </div>
   <Separator />
 </div>
@@ -155,9 +212,15 @@
     display: flex;
     flex-direction: column;
     margin-left: 10px;
+    margin-right: auto;
   }
 
-  .song, .title {
+  .last-songs-button {
+    align-self: flex-start;
+  }
+
+  .station-detail .song,
+  .station-detail .title {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -165,12 +228,12 @@
     -webkit-box-orient: vertical;
   }
 
-  .title {
+  .station-detail .title {
     font-size: 1.2rem;
     font-weight: 600;
   }
 
-  .song {
+  .station-detail .song {
     font-weight: 400;
   }
 
@@ -190,6 +253,59 @@
       justify-content: flex-start;
     }
 
+  }
+
+  .last-songs-container {
+    background-color: var(--secondary-background);
+    max-height: 0;
+    transition: max-height .25s ease-out;
+    overflow: hidden;
+  }
+
+  .show {
+    max-height: 40rem;
+    transition: max-height .25s ease-in;
+  }
+
+  .last-songs-container h2 {
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .last-songs-wrapper {
+    display: flex;
+    flex-direction: column;
+    font-size: .8rem;
+    max-height: 20rem;
+    overflow: auto;
+  }
+
+  .last-songs-detail {
+    margin-right: .5rem;
+  }
+
+  .last-songs-item {
+    display: flex;
+    justify-content: space-between;
+    padding: .4rem 1rem;
+    opacity: 0.7;
+  }
+
+  .last-songs-item:hover {
+    opacity: 1;
+  }
+
+  .last-songs-item .title {
+    font-weight: 400;
+    font-size: .8rem;
+  }
+
+  .last-songs-item .song {
+    font-weight: 600;
+  }
+
+  .last-songs-date {
+    white-space: nowrap;
   }
 
 </style>

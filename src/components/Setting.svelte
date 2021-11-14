@@ -6,6 +6,7 @@
   import { radioBrowser } from '../services/api';
   import CONFIG from '../configs';
   import { showToast } from '../utils/toast';
+  import LocalStorage from '../utils/local-storage';
 
   const { LOCAL_STORAGE } = CONFIG;
 
@@ -32,14 +33,14 @@
   const getFromLocalStorage = () => {
     const getSetting = {};
     for (const key in setting) {
-      getSetting[key] = localStorage.getItem(key);
+      getSetting[key] = LocalStorage.get(key);
     }
     setSetting(getSetting);
   };
 
   const saveToLocalStorage = () => {
     for (const key in setting) {
-      localStorage.setItem(key, setting[key]);
+      LocalStorage.set(key, setting[key]);
     }
   };
 

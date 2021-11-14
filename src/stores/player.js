@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import myAudio from '../services/audio';
 import { radioBrowser } from '../services/api';
+import LocalStorage from '../utils/local-storage';
 import CONFIG from '../configs';
 
 const { VOLUME_STEP } = CONFIG;
@@ -41,7 +42,7 @@ const createPlayer = () => {
       };
 
       // set last played to local storage
-      localStorage.setItem(CONFIG.LOCAL_STORAGE.LAST_PLAYED, JSON.stringify(station));
+      LocalStorage.set(CONFIG.LOCAL_STORAGE.LAST_STATION, JSON.stringify(station));
 
       return station;
     }),
@@ -65,7 +66,7 @@ const createPlayer = () => {
       };
     }),
     setVolume: (volume) => update((state) => {
-      localStorage.setItem(CONFIG.LOCAL_STORAGE.VOLUME, volume);
+      LocalStorage.set(CONFIG.LOCAL_STORAGE.VOLUME, volume);
       myAudio.setVolume(volume / VOLUME_STEP);
       return {
         ...state,
