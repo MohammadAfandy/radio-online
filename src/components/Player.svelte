@@ -34,7 +34,7 @@
   };
 
   const handlePlay = () => {
-    player.play();
+    player.play(mediaUrl);
   };
 
   const handlePrev = async () => {
@@ -44,7 +44,7 @@
       prevStation = $favoriteStations[$favoriteStations.length - 1];
     }
     player.setCurrentStation(prevStation);
-    if ($player.isPlaying) player.play();
+    if ($player.isPlaying) player.play(prevStation.url_resolved || prevStation.url);
   };
 
   const handleNext = async () => {
@@ -54,7 +54,7 @@
       nextStation = $favoriteStations[0];
     }
     player.setCurrentStation(nextStation);
-    if ($player.isPlaying) player.play();
+    if ($player.isPlaying) player.play(nextStation.url_resolved || nextStation.url);
   };
 
   const handleChangeVolume = (event) => {
@@ -74,10 +74,10 @@
   };
 
   const updateStationSong = async () => {
-    if ($player.isPlaying && ($player.url_resolved || $player.url)) {
+    if ($player.isPlaying && mediaUrl) {
       const { data: song } = await radioLise.get('', {
         params: {
-          url: $player.url_resolved || $player.url,
+          url: mediaUrl,
         },
       });
 
@@ -111,20 +111,17 @@
 
   let intervalSong;
   const createIntervalSong = () => {
+    updateStationSong();
     if (intervalSong) clearInterval(intervalSong);
     intervalSong = onInterval(() => {
       updateStationSong();
     }, 20 * 1000);
   };
 
-  const updateSongAndInterval = () => {
-    updateStationSong();
-    createIntervalSong();
-  };
-
+  $: mediaUrl = $player.url_resolved || $player.url;
   $: stationuuid = $player.stationuuid;
   $: if (stationuuid) {
-    updateSongAndInterval();
+    createIntervalSong();
   }
 
 </script>

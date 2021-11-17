@@ -21,7 +21,7 @@
 
   const handlePlay = () => {
     player.setCurrentStation(station);
-    player.play();
+    player.play(station.url_resolved || station.url);
   };
 
   const handleDelete = () => {

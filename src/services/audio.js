@@ -8,7 +8,6 @@ class MyAudio {
   }
 
   async play(url) {
-    this.stop();
     this.audio.src = url;
     await this.audio.play();
   }

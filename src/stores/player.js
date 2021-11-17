@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import myAudio from '../services/audio';
 import { radioBrowser } from '../services/api';
 import LocalStorage from '../utils/local-storage';
+import { showToast } from '../utils/toast';
 import CONFIG from '../configs';
 
 const { VOLUME_STEP } = CONFIG;
@@ -38,7 +39,6 @@ const createPlayer = () => {
         url,
         url_resolved,
         song: initialData.song,
-        isPlaying: false,
       };
 
       // set last played to local storage
@@ -46,18 +46,29 @@ const createPlayer = () => {
 
       return station;
     }),
-    play: (url) => update((state) => {
-      url = url || state.url_resolved || state.url;
-      myAudio.play(url);
-
-      // send click count to radiobrowser server
-      radioBrowser.get(`url/${state.stationuuid}`);
-
-      return {
-        ...state,
-        isPlaying: true,
-      };
-    }),
+    play: async (url) => {
+      update((state) => {
+        return {
+          ...state,
+          isPlaying: true,
+        };
+      });
+      try {
+        await myAudio.play(url);
+        return update((state) => {
+          radioBrowser.get(`url/${state.stationuuid}`);
+          return state;
+        });
+      } catch (error) {
+        console.error(error);
+        showToast('Sorry, failed to load station', 'danger');
+        myAudio.stop();
+        return update((state) => ({
+          ...state,
+          isPlaying: false,
+        }));
+      }
+    },
     stop: () => update((state) => {
       myAudio.stop();
       return {
