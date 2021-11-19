@@ -1,5 +1,4 @@
 import { writable } from 'svelte/store';
-import myAudio from '../services/audio';
 import { radioBrowser } from '../services/api';
 import LocalStorage from '../utils/local-storage';
 import { showToast } from '../utils/toast';
@@ -8,6 +7,17 @@ import CONFIG from '../configs';
 const { VOLUME_STEP } = CONFIG;
 
 const createPlayer = () => {
+  // create audio element object
+  const audio = new Audio();
+  audio.addEventListener('error', function(event) {
+    console.error(event.currentTarget.error);
+    update((state) => ({
+      ...state,
+      isPlaying: false,
+    }));
+    showToast('Sorry, failed to play station', 'danger');
+  });
+
   const initialData = {
     stationuuid: '',
     name: 'No station played',
@@ -46,31 +56,21 @@ const createPlayer = () => {
 
       return station;
     }),
-    play: async (url) => {
-      update((state) => {
-        return {
-          ...state,
-          isPlaying: true,
-        };
-      });
-      try {
-        await myAudio.play(url);
-        return update((state) => {
-          radioBrowser.get(`url/${state.stationuuid}`);
-          return state;
-        });
-      } catch (error) {
-        console.error(error);
-        showToast('Sorry, failed to load station', 'danger');
-        myAudio.stop();
-        return update((state) => ({
-          ...state,
-          isPlaying: false,
-        }));
-      }
-    },
+    play: (url) => update((state) => {
+      // send click event to radiobrowser
+      radioBrowser.get(`url/${state.stationuuid}`);
+
+      const mediaUrl = url || state.url_resolved || state.url;
+      audio.src = mediaUrl;
+      audio.play();
+
+      return {
+        ...state,
+        isPlaying: true,
+      };
+    }),
     stop: () => update((state) => {
-      myAudio.stop();
+      audio.pause();
       return {
         ...state,
         isPlaying: false,
@@ -78,7 +78,7 @@ const createPlayer = () => {
     }),
     setVolume: (volume) => update((state) => {
       LocalStorage.set(CONFIG.LOCAL_STORAGE.VOLUME, volume);
-      myAudio.setVolume(volume / VOLUME_STEP);
+      audio.volume = volume / VOLUME_STEP;
       return {
         ...state,
         volume,

@@ -73,6 +73,26 @@
     isShowLastSongs = !isShowLastSongs;
   };
 
+  const reorderAndSaveLastSongs = (newLastSongs) => {
+    lastSongs = newLastSongs.sort((a, b) => {
+      // sort by pinned first
+      if (a.isPinned && !b.isPinned) return -1;
+      if (b.isPinned && !a.isPinned) return 1;
+
+      // sort by date
+      return new Date(b.date) - new Date(a.date);
+    });
+    LocalStorage.set(CONFIG.LOCAL_STORAGE.LAST_SONGS, lastSongs);
+  };
+
+  const handlePinSong = (idx) => {
+    const tempLastSongs = [...lastSongs];
+    if (tempLastSongs[idx]) {
+      tempLastSongs[idx].isPinned = !tempLastSongs[idx].isPinned;
+      reorderAndSaveLastSongs(tempLastSongs);
+    }
+  };
+
   const updateStationSong = async () => {
     if ($player.isPlaying && mediaUrl) {
       const { data: song } = await radioLise.get('', {
@@ -91,20 +111,21 @@
           date: new Date(),
         };
 
-        const currentLastSongs = LocalStorage.get(CONFIG.LOCAL_STORAGE.LAST_SONGS) || [];
-        if (currentLastSongs.length) {
+        const lastSongsNotPinned = lastSongs.filter((lastSong) => !lastSong.isPinned);
+        const lastData = lastSongsNotPinned.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+        if (lastData) {
           // don't add if song title and station is same as last song data
-          const lastData = currentLastSongs[0];
           if (lastData.station === songData.station && lastData.title === songData.title) {
             return;
           }
         }
 
-        lastSongs = [songData, ...currentLastSongs];
-        if (lastSongs.length > MAX_LAST_SONGS) {
-          lastSongs.splice(MAX_LAST_SONGS - lastSongs.length);
+        const lastSongsPinned = lastSongs.filter((lastSong) => lastSong.isPinned);
+        const tempLastSongsNotPinned = [songData, ...lastSongsNotPinned];
+        if (tempLastSongsNotPinned.length > MAX_LAST_SONGS - lastSongsPinned.length) {
+          tempLastSongsNotPinned.splice(MAX_LAST_SONGS - lastSongsPinned.length - tempLastSongsNotPinned.length);
         }
-        LocalStorage.set(CONFIG.LOCAL_STORAGE.LAST_SONGS, lastSongs);
+        reorderAndSaveLastSongs([...lastSongsPinned, ...tempLastSongsNotPinned]);
       }
     }
   };
@@ -167,13 +188,22 @@
   <h2>Last {MAX_LAST_SONGS} Songs Played</h2>
   <div class="last-songs-wrapper">
     {#each lastSongs as lastSong, idx (idx)}
-      <div class="last-songs-item">
+      <div class="last-songs-item" class:pinned={lastSong.isPinned}>
         <div class="last-songs-detail">
           <div class="song">{lastSong.title}</div>
           <div class="title">{lastSong.station}</div>
+          {#if lastSong.isPinned}
+            <div class="title">{moment(lastSong.date).format('MMM DD YYYY HH:mm:ss')}</div>
+          {:else}
+            <div class="title">{moment(lastSong.date).fromNow()}</div>
+          {/if}
         </div>
-        <div class="last-songs-date">
-          <span>{moment(lastSong.date).fromNow()}</span>
+        <div>
+          {#if lastSong.isPinned}
+            <IconButton iconName="star" onClick={() => handlePinSong(idx)} />
+          {:else}
+            <IconButton iconName="star-o" onClick={() => handlePinSong(idx)} />
+          {/if}
         </div>
       </div>
     {/each}
@@ -288,7 +318,7 @@
     opacity: 0.7;
   }
 
-  .last-songs-item:hover {
+  .last-songs-item.pinned, .last-songs-item:hover {
     opacity: 1;
   }
 
@@ -299,10 +329,6 @@
 
   .last-songs-item .song {
     font-weight: 600;
-  }
-
-  .last-songs-date {
-    white-space: nowrap;
   }
 
 </style>
