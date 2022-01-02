@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { showToast } from '../utils/toast';
+  import { abbrNum } from '../utils/helpers';
   import Card from './UI/Card.svelte';
   import Image from './UI/Image.svelte';
   import IconButton from './UI/IconButton.svelte';
@@ -11,6 +12,7 @@
   export let station;
   export let isFavorite = false;
   export let showVoteCount = false;
+  let isVoteLoading = false;
 
   const generateFavoriteText = (action = 'add') => {
     if (['add', 'remove'].includes(action) === false) {
@@ -43,6 +45,7 @@
   };
 
   const handleVote = async () => {
+    isVoteLoading = true;
     const { data: vote } = await radioBrowser.get(`vote/${station.stationuuid}`);
     if (vote.ok) {
       showToast(`Vote for "${station.name}" success`, 'success');
@@ -52,11 +55,8 @@
     dispatch('vote', {
       station,
     });
+    isVoteLoading = false;
   };
-
-  $: image = ($player.isPlaying && $player.stationuuid === station.stationuuid)
-    ? '/images/equalizer.gif'
-    : station.favicon;
 
 </script>
 
@@ -66,7 +66,7 @@
       <div class="station-name">
         <div class="station-logo">
           <Image
-            src={image}
+            src={station.favicon}
             alt="Station logo {station.name}"
             width={40}
             height={40}
@@ -76,24 +76,29 @@
         </div>
         <span class="station-title" id="station_title">{station.name}</span>
       </div>
-      {#if station.homepage}
-        <a href={station.homepage} ref="noreferrer" target="_blank">
-          <IconButton iconName="external-link" onClick={true} />
-        </a>
+      {#if station.country}
+        <Image
+          src={`https://flagcdn.com/w20/${station.countrycode.toLowerCase()}.png`}
+          alt={station.country}
+          width={20}
+          height={20}
+          fallbackSrc="/images/placeholder.jpg"
+          rounded
+        />
       {/if}
     </div>
     <div class="station-detail">
-      {#if station.country}
-        <span class="badge">{station.country}</span>
-      {/if}
       {#if station.state}
         <span class="badge">{station.state}</span>
+      {/if}
+      {#if station.codec}
+        <span class="badge">{station.codec}</span>
       {/if}
       {#if station.bitrate}
         <span class="badge">{station.bitrate} kbps</span>
       {/if}
       {#if station.tags}
-        {#each station.tags.split(',').slice(0, 2) as tag}
+        {#each station.tags.split(',').slice(0, 5) as tag}
           <span class="badge">
             {tag}
           </span>
@@ -101,16 +106,43 @@
       {/if}
     </div>
     <div class="station-action">
+      {#if $player.isPlaying && $player.stationuuid === station.stationuuid}
+        <div class="equalizer">
+          <Image
+            src="/images/equalizer.gif"
+            width={35}
+            height={35}
+          />
+        </div>
+      {/if}
+      {#if station.homepage}
+        <a href={station.homepage} ref="noreferrer" target="_blank">
+          <IconButton
+            size={1.2}
+            iconName="external-link"
+            onClick={true}
+          />
+        </a>
+      {/if}
       {#if isFavorite}
-        <IconButton size={1.5} iconName="heart" onClick={handleDelete} />
+        <IconButton
+          size={1.2}
+          iconName="heart"
+          onClick={handleDelete}
+        />
       {:else}
-        <IconButton size={1.5} iconName="heart-o" onClick={handleAdd} />
+        <IconButton
+          size={1.2}
+          iconName="heart-o"
+          onClick={handleAdd}
+        />
       {/if}
       <IconButton
-        size={1.5}
         iconName="thumbs-up"
-        badge={showVoteCount && Number(station.votes).toLocaleString()}
+        size={1.2}
+        badge={showVoteCount && abbrNum(Number(station.votes), 1)}
         onClick={handleVote}
+        isLoading={isVoteLoading}
       />
     </div>
   </div>
@@ -162,16 +194,23 @@
 
   .station-action {
     display: flex;
+    justify-content: end;
     margin-top: .5rem;
+  }
+
+  .station-action .equalizer {
+    margin-right: auto;
+    filter: brightness(2);
   }
 
   .badge {
     display: inline-block;
     font-size: .8em;
-    padding: .2rem;
+    padding: .3rem;
     border-radius: 5px;
     background-color: var(--third-background);
     margin-right: .2rem;
     margin-bottom: .2rem;
+    color: #FFF;
   }
 </style>

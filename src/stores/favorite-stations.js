@@ -17,7 +17,9 @@ const createFavoriteStations = () => {
     },
     set: (stations) => {
       FavoriteStationDB.clear();
-      FavoriteStationDB.set(stations);
+      for (const station of stations) {
+        FavoriteStationDB.put(station);
+      }
       return set(stations);
     },
     add: (station) => update((state) => {
@@ -36,6 +38,10 @@ const createFavoriteStations = () => {
       FavoriteStationDB.delete(uuid);
       return state.filter((st) => st.stationuuid !== uuid);
     }),
+    clear: () => {
+      FavoriteStationDB.clear();
+      return [];
+    },
   };
 };
 

@@ -4,9 +4,12 @@
   import { favoriteStations } from '../stores';
   import SearchInput from './UI/SearchInput.svelte';
   import IconButton from './UI/IconButton.svelte';
+  import { radioBrowser } from '../services/api';
+  import { showToast } from '../utils/toast';
 
   let stations = [];
   let searchValue = '';
+  let isRefreshLoading = false;
 
   onMount(async() => {
     stations = await favoriteStations.init();
@@ -29,12 +32,39 @@
     stations = filterStations($favoriteStations, searchValue);
   };
 
+  const handleRefresh = async () => {
+    isRefreshLoading = true;
+    const { data: refreshedStations } = await radioBrowser.post('stations/byuuid', {
+      uuids: $favoriteStations.map((stat) => stat.stationuuid),
+    });
+
+    stations = favoriteStations.set(refreshedStations);
+    showToast('Refresh favorite stations success');
+    isRefreshLoading = false;
+  };
+
+  // const handleRemoveAll = async () => {
+  //   stations = favoriteStations.clear();
+  //   showToast('Remove all favorite stations success');
+  // };
+
   $: stations = filterStations($favoriteStations, searchValue);
 
 </script>
 
 <div class="favorite-station">
-  <h1>Favorite Stations ({$favoriteStations.length})</h1>
+  <div class="title">
+    <h1>Favorite Stations ({$favoriteStations.length})</h1>
+    <IconButton
+      iconName="refresh"
+      onClick={handleRefresh}
+      isLoading={isRefreshLoading}
+    />
+    <!-- <IconButton
+      iconName="trash"
+      onClick={handleRemoveAll}
+    /> -->
+  </div>
   {#if stations.length}
     <div class="search">
       <SearchInput
@@ -47,7 +77,7 @@
         <StationItem
           {station}
           isFavorite
-          showVoteCount={false}
+          showVoteCount={true}
         />
       {/each}
     </div>
@@ -67,17 +97,23 @@
     background-color: var(--secondary-background);
   }
 
+  .title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-right: auto;
+  }
+
   .list-wrapper {
     display: grid;
     gap: 0 1rem;
   }
 
   .search {
-    margin-bottom: 1rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
     margin-bottom: 1rem;
   }
 

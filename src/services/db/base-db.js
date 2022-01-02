@@ -33,7 +33,7 @@ export default class BaseDB {
   }
 
   static async clear() {
-    return (await this.dbPromise).delete(this.objectStoreName);
+    return (await this.dbPromise).clear(this.objectStoreName);
   }
 
   static async isExist(id) {

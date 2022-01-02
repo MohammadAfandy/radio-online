@@ -33,9 +33,9 @@
     });
 
     const { data: countryList } = await radioBrowser.get('countries');
-    countries = countryList.map(({ name }) => ({
+    countries = countryList.map(({ name, stationcount }) => ({
       val: name,
-      text: name,
+      text: `${name} (${stationcount})`,
     }));
   });
 

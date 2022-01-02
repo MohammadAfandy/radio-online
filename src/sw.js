@@ -36,6 +36,16 @@ registerRoute(
 );
 
 registerRoute(
+  ({ url, request }) => (
+    url.origin === 'https://flagcdn.com'
+    && request.destination === 'image'
+  ),
+  new StaleWhileRevalidate({
+    cacheName: `${APPNAME}-flagcdn`,
+  }),
+);
+
+registerRoute(
   ({ url }) => (
     url.origin.endsWith('api.radio-browser.info')
     && (

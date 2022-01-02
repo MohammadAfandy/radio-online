@@ -3,6 +3,7 @@
   export let onClick = false;
   export let size = 1;
   export let badge = '';
+  export let isLoading = false;
 </script>
 
 <button
@@ -10,12 +11,19 @@
   class:clickable={onClick}
   style="font-size: {size}rem"
 >
-  <i
-    class="fa fa-{iconName}"
-    aria-hidden="true"
-    class:badge-icon={badge}
-    data-badge={badge}>
-  </i>
+  {#if isLoading}
+    <i
+      class="fas fa-spinner fa-spin"
+      aria-hidden="true">
+    </i>
+  {:else}
+    <i
+      class="fa fa-{iconName}"
+      aria-hidden="true"
+      class:badge-icon={badge}
+      data-badge={badge}>
+    </i>
+  {/if}
   <slot></slot>
 </button>
 
@@ -40,11 +48,11 @@
 
   .badge-icon:after {
     position: absolute;
-    left: 90%;
-    top: -40%;
+    left: 75%;
+    top: -70%;
     content: attr(data-badge);
-    font-size: 40%;
-    padding: .4rem;
+    font-size: 55%;
+    padding: .3rem;
     border-radius: 10px;
     color: var(--primary-color);
     background: var(--fourth-background);

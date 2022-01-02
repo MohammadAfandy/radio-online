@@ -9,6 +9,7 @@
     box-shadow: 0 4px 4px 4px var(--shadow-color);
     border-radius: 15px;
     margin-bottom: 1rem;
+    background-color: #212529;
   }
 
 </style>
