@@ -33,12 +33,18 @@
   };
 
   const handleRefresh = async () => {
+    const uuids = $favoriteStations.map((stat) => stat.stationuuid);
     isRefreshLoading = true;
     const { data: refreshedStations } = await radioBrowser.post('stations/byuuid', {
-      uuids: $favoriteStations.map((stat) => stat.stationuuid),
+      uuids,
     });
 
-    stations = favoriteStations.set(refreshedStations);
+    // reorder to previous order
+    const newStations = refreshedStations.sort((a, b) => {
+      return uuids.indexOf(a.stationuuid) - uuids.indexOf(b.stationuuid);
+    });
+
+    stations = favoriteStations.set(newStations);
     showToast('Refresh favorite stations success');
     isRefreshLoading = false;
   };

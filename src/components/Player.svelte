@@ -177,7 +177,7 @@
     <IconButton iconName="step-forward" onClick={handleNext} />
     <div class="volume">
       <IconButton iconName="volume-off" onClick={handleVolumeMute} />
-      <input type="range" value={$player.volume} on:change={handleChangeVolume} min=0 max={VOLUME_STEP} />
+      <input type="range" value={$player.volume} on:input={handleChangeVolume} min=0 max={VOLUME_STEP} />
       <IconButton iconName="volume-up" onClick={handleVolumeFull} />
     </div>
   </div>

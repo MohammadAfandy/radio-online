@@ -61,7 +61,9 @@ const createPlayer = () => {
       radioBrowser.get(`url/${state.stationuuid}`);
 
       const mediaUrl = url || state.url_resolved || state.url;
+      audio.pause();
       audio.src = mediaUrl;
+      audio.load();
       audio.play();
 
       return {
