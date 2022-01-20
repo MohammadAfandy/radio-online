@@ -94,39 +94,43 @@
   };
 
   const updateStationSong = async () => {
-    if ($player.isPlaying && mediaUrl) {
+    const radioUrl = mediaUrl;
+    if ($player.isPlaying && radioUrl) {
       const { data: song } = await radioLise.get('', {
         params: {
-          url: mediaUrl,
+          url: radioUrl,
         },
       });
 
       const { title } = song;
-      if (title) {
-        player.updateSong(title);
+      if (!title) return;
 
-        const songData = {
-          station: $player.name,
-          title,
-          date: new Date(),
-        };
+      // don't update title if mediaUrl has changed
+      if (radioUrl !== mediaUrl) return;
 
-        const lastSongsNotPinned = lastSongs.filter((lastSong) => !lastSong.isPinned);
-        const lastData = lastSongsNotPinned.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-        if (lastData) {
-          // don't add if song title and station is same as last song data
-          if (lastData.station === songData.station && lastData.title === songData.title) {
-            return;
-          }
+      player.updateSong(title);
+
+      const songData = {
+        station: $player.name,
+        title,
+        date: new Date(),
+      };
+
+      const lastSongsNotPinned = lastSongs.filter((lastSong) => !lastSong.isPinned);
+      const lastData = lastSongsNotPinned.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+      if (lastData) {
+        // don't add if song title and station is same as last song data
+        if (lastData.station === songData.station && lastData.title === songData.title) {
+          return;
         }
-
-        const lastSongsPinned = lastSongs.filter((lastSong) => lastSong.isPinned);
-        const tempLastSongsNotPinned = [songData, ...lastSongsNotPinned];
-        if (tempLastSongsNotPinned.length > MAX_LAST_SONGS - lastSongsPinned.length) {
-          tempLastSongsNotPinned.splice(MAX_LAST_SONGS - lastSongsPinned.length - tempLastSongsNotPinned.length);
-        }
-        reorderAndSaveLastSongs([...lastSongsPinned, ...tempLastSongsNotPinned]);
       }
+
+      const lastSongsPinned = lastSongs.filter((lastSong) => lastSong.isPinned);
+      const tempLastSongsNotPinned = [songData, ...lastSongsNotPinned];
+      if (tempLastSongsNotPinned.length > MAX_LAST_SONGS - lastSongsPinned.length) {
+        tempLastSongsNotPinned.splice(MAX_LAST_SONGS - lastSongsPinned.length - tempLastSongsNotPinned.length);
+      }
+      reorderAndSaveLastSongs([...lastSongsPinned, ...tempLastSongsNotPinned]);
     }
   };
 
