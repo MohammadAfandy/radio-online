@@ -55,7 +55,7 @@
       component: Confirm,
       props: {
         title: 'Reset Favorite Stations',
-        description: 'Are you sure you want to reset favorite stations fealfh oaeofoi aeoif ioaiofj ioeaiofj eiojiof jioajf ioejiofaeiofaen foaebofb eaobob feoib',
+        description: 'Are you sure you want to reset favorite stations ?',
         handleCancel: () => modal.close(),
         handleConfirm: () => {
           favoriteStations.clear();
