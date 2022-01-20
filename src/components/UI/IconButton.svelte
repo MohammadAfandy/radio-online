@@ -4,12 +4,15 @@
   export let size = 1;
   export let badge = '';
   export let isLoading = false;
+  export let isDisabled = false;
 </script>
 
 <button
   on:click|stopPropagation={onClick}
   class:clickable={onClick}
   style="font-size: {size}rem"
+  disabled={isDisabled}
+  class:disabled={isDisabled}
 >
   {#if isLoading}
     <i
@@ -39,6 +42,11 @@
 
   .clickable {
     cursor: pointer;
+  }
+
+  .disabled {
+    cursor: not-allowed;
+    opacity: .5;
   }
 
   button i {

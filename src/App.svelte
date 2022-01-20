@@ -7,6 +7,7 @@
   import Drawer from './components/UI/Drawer.svelte';
   import SearchStation from './components/SearchStation.svelte';
   import Setting from './components/Setting.svelte';
+  import Modal from './components/UI/Modal.svelte';
 
   let isDrawerOpen = false;
   let DrawerComponent = null;
@@ -37,6 +38,7 @@
     <FavoriteStation />
   </Container>
   <SvelteToast options={{ reversed: true, intro: { y: 192 } }} />
+  <Modal />
 </main>
 
 <style>

@@ -1,9 +1,10 @@
 <script>
   import { onMount } from 'svelte';
   import StationItem from './StationItem.svelte';
-  import { favoriteStations } from '../stores';
+  import { favoriteStations, modal } from '../stores';
   import SearchInput from './UI/SearchInput.svelte';
   import IconButton from './UI/IconButton.svelte';
+  import Confirm from './UI/Confirm.svelte';
   import { radioBrowser } from '../services/api';
   import { showToast } from '../utils/toast';
 
@@ -49,10 +50,21 @@
     isRefreshLoading = false;
   };
 
-  // const handleRemoveAll = async () => {
-  //   stations = favoriteStations.clear();
-  //   showToast('Remove all favorite stations success');
-  // };
+  const handleRemoveAll = async () => {
+    modal.open({
+      component: Confirm,
+      props: {
+        title: 'Reset Favorite Stations',
+        description: 'Are you sure you want to reset favorite stations fealfh oaeofoi aeoif ioaiofj ioeaiofj eiojiof jioajf ioejiofaeiofaen foaebofb eaobob feoib',
+        handleCancel: () => modal.close(),
+        handleConfirm: () => {
+          favoriteStations.clear();
+          modal.close();
+          showToast('Remove all favorite stations success');
+        },
+      },
+    });
+  };
 
   $: stations = filterStations($favoriteStations, searchValue);
 
@@ -63,30 +75,39 @@
     <h1>Favorite Stations ({$favoriteStations.length})</h1>
     <IconButton
       iconName="refresh"
+      isDisabled={$favoriteStations.length === 0}
       onClick={handleRefresh}
       isLoading={isRefreshLoading}
     />
-    <!-- <IconButton
+    <IconButton
       iconName="trash"
+      isDisabled={$favoriteStations.length === 0}
       onClick={handleRemoveAll}
-    /> -->
+    />
   </div>
-  {#if stations.length}
+
+  {#if $favoriteStations.length}
     <div class="search">
       <SearchInput
         placeholder="Search favorite station"
         onInput={handleSearch}
       />
     </div>
-    <div class="list-wrapper">
-      {#each stations as station (station.stationuuid)}
-        <StationItem
-          {station}
-          isFavorite
-          showVoteCount={true}
-        />
-      {/each}
-    </div>
+    {#if stations.length}
+      <div class="list-wrapper">
+        {#each stations as station (station.stationuuid)}
+          <StationItem
+            {station}
+            isFavorite
+            showVoteCount={true}
+          />
+        {/each}
+      </div>
+    {:else}
+      <IconButton iconName="frown">
+        No stations found.
+      </IconButton>
+    {/if}
   {:else}
     <IconButton iconName="frown">
       You don't have any favorite stations.

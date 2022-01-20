@@ -5,7 +5,8 @@
   import Card from './UI/Card.svelte';
   import Image from './UI/Image.svelte';
   import IconButton from './UI/IconButton.svelte';
-  import { player, favoriteStations } from '../stores';
+  import Confirm from './UI/Confirm.svelte';
+  import { player, favoriteStations, modal } from '../stores';
   import { radioBrowser } from '../services/api';
 
   const dispatch = createEventDispatcher();
@@ -27,11 +28,22 @@
   };
 
   const handleDelete = () => {
-    favoriteStations.remove(station.stationuuid);
-    isFavorite = false;
-    showToast(generateFavoriteText('remove'));
-    dispatch('delete', {
-      station,
+    modal.open({
+      component: Confirm,
+      props: {
+        title: `Remove ${station.name}`,
+        description: `Are you sure you want to remove ${station.name} from favorite stations ?`,
+        handleCancel: () => modal.close(),
+        handleConfirm: () => {
+          favoriteStations.remove(station.stationuuid);
+          isFavorite = false;
+          modal.close();
+          showToast(generateFavoriteText('remove'));
+          dispatch('delete', {
+            station,
+          });
+        },
+      },
     });
   };
 

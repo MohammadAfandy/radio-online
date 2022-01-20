@@ -40,7 +40,7 @@ const createFavoriteStations = () => {
     }),
     clear: () => {
       FavoriteStationDB.clear();
-      return [];
+      return set([]);
     },
   };
 };
