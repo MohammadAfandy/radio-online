@@ -73,7 +73,7 @@
 </script>
 
 <Card>
-  <div class="station-item" on:click={handlePlay}>
+  <div class="station-item">
     <div class="station-info">
       <div class="station-name">
         <div class="station-logo">
@@ -118,15 +118,21 @@
       {/if}
     </div>
     <div class="station-action">
-      {#if $player.isPlaying && $player.stationuuid === station.stationuuid}
-        <div class="equalizer">
+      <div class="play-equalizer">
+        {#if $player.isPlaying && $player.stationuuid === station.stationuuid}
           <Image
             src="/images/equalizer.gif"
             width={35}
             height={35}
           />
-        </div>
-      {/if}
+        {:else}
+          <IconButton
+            size={1.2}
+            iconName="play"
+            onClick={handlePlay}
+          />
+        {/if}
+      </div>
       {#if station.homepage}
         <a href={station.homepage} ref="noreferrer" target="_blank">
           <IconButton
@@ -167,7 +173,6 @@
     justify-content: space-between;
     height: 100%;
     padding: .3rem 1rem;
-    cursor: pointer;
   }
 
   .station-info {
@@ -210,7 +215,7 @@
     margin-top: .5rem;
   }
 
-  .station-action .equalizer {
+  .station-action .play-equalizer {
     margin-right: auto;
     filter: brightness(2);
   }
