@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import moment from 'moment';
+  import Avatar from 'svelte-avatar';
   import Separator from './UI/Separator.svelte';
   import IconButton from './UI/IconButton.svelte';
   import Image from './UI/Image.svelte';
@@ -154,13 +155,21 @@
 <div class="player-container">
   <div class="station-info">
     <div class="station-logo">
-      <Image
-        src={$player.favicon}
-        width={50}
-        height={50}
-        fallbackSrc="/images/placeholder.jpg"
-        rounded
-      />
+      {#if $player.favicon}
+        <Image
+          src={$player.favicon}
+          width={50}
+          height={50}
+          fallbackSrc="/images/placeholder.jpg"
+          rounded
+        />
+      {:else}
+        <Avatar
+          name={$player.name}
+          bgColor="royalblue"
+          size="50px"
+        />
+      {/if}
     </div>
     <div class="station-detail">
       <span class="title">{$player.name}</span>
@@ -171,13 +180,13 @@
     </div>
   </div>
   <div class="player">
-    <IconButton iconName="step-backward" onClick={handlePrev} />
+    <IconButton iconName="step-backward" onClick={handlePrev} isDisabled={!stationuuid} />
     {#if ($player.isPlaying)}
-      <IconButton iconName="stop" onClick={handleStop} />
+      <IconButton iconName="stop" onClick={handleStop} isDisabled={!stationuuid} />
     {:else}
-      <IconButton iconName="play" onClick={handlePlay} />
+      <IconButton iconName="play" onClick={handlePlay} isDisabled={!stationuuid} />
     {/if}
-    <IconButton iconName="step-forward" onClick={handleNext} />
+    <IconButton iconName="step-forward" onClick={handleNext} isDisabled={!stationuuid} />
     <div class="volume">
       <IconButton iconName="volume-off" onClick={handleVolumeMute} />
       <input type="range" value={$player.volume} on:input={handleChangeVolume} min=0 max={VOLUME_STEP} />

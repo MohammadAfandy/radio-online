@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import Avatar from 'svelte-avatar';
   import { showToast } from '../utils/toast';
   import { abbrNum } from '../utils/helpers';
   import Card from './UI/Card.svelte';
@@ -14,6 +15,7 @@
   export let isFavorite = false;
   export let showVoteCount = false;
   let isVoteLoading = false;
+  let isHoverEqualizer = false;
 
   const generateFavoriteText = (action = 'add') => {
     if (['add', 'remove'].includes(action) === false) {
@@ -25,6 +27,10 @@
   const handlePlay = () => {
     player.setCurrentStation(station);
     player.play(station.url_resolved || station.url);
+  };
+
+  const handleStop = () => {
+    player.stop();
   };
 
   const handleDelete = () => {
@@ -69,6 +75,14 @@
     });
     isVoteLoading = false;
   };
+  
+  const handleMouseEnterEqualizer = () => {
+    isHoverEqualizer = true;
+  };
+
+  const handleMouseLeaveEqualizer = () => {
+    isHoverEqualizer = false;
+  };
 
 </script>
 
@@ -77,14 +91,22 @@
     <div class="station-info">
       <div class="station-name">
         <div class="station-logo">
-          <Image
-            src={station.favicon}
-            alt="Station logo {station.name}"
-            width={40}
-            height={40}
-            fallbackSrc="/images/placeholder.jpg"
-            rounded
-          />
+          {#if station.favicon}
+            <Image
+              src={station.favicon}
+              alt="Station logo {station.name}"
+              width={40}
+              height={40}
+              fallbackSrc="/images/placeholder.jpg"
+              rounded
+            />
+          {:else}
+            <Avatar
+              name={station.name}
+              bgColor="royalblue"
+              size="40px"
+            />
+          {/if}
         </div>
         <span class="station-title" id="station_title">{station.name}</span>
       </div>
@@ -120,11 +142,21 @@
     <div class="station-action">
       <div class="play-equalizer">
         {#if $player.isPlaying && $player.stationuuid === station.stationuuid}
-          <Image
-            src="/images/equalizer.gif"
-            width={35}
-            height={35}
-          />
+          <div on:mouseenter={handleMouseEnterEqualizer} on:mouseleave={handleMouseLeaveEqualizer}>
+            {#if isHoverEqualizer}
+              <IconButton
+                size={1.2}
+                iconName="stop"
+                onClick={handleStop}
+              />
+            {:else}
+              <Image
+                src="/images/equalizer.gif"
+                width={35}
+                height={35}
+              />
+            {/if}
+          </div>
         {:else}
           <IconButton
             size={1.2}

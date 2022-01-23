@@ -20,7 +20,7 @@ const createPlayer = () => {
 
   const initialData = {
     stationuuid: '',
-    name: 'No station played',
+    name: '',
     song: '...',
     favicon: '',
     url: '',
