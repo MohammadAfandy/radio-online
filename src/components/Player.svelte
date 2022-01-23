@@ -156,7 +156,6 @@
     <div class="station-logo">
       <Image
         src={$player.favicon}
-        alt="Station logo {$player.name}"
         width={50}
         height={50}
         fallbackSrc="/images/placeholder.jpg"
@@ -236,6 +235,8 @@
   }
 
   .station-logo {
+    width: 50px;
+    height: 50px;
     margin-right: 1rem;
   }
 
