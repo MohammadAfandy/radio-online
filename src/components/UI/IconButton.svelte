@@ -68,7 +68,7 @@
   }
 
   @media(hover: hover) {    
-    button:hover {
+    button.clickable:hover {
       opacity: .5;
     }
   }

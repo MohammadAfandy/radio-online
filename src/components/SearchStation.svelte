@@ -17,10 +17,19 @@
   export let DrawerComponent;
 
   const limitStations = 18;
+  const defaultSort = 'votes';
+  const orderList = [
+    { val: 'votes', text: 'Votes' },
+    { val: 'clickcount', text: 'Clicks' },
+    { val: 'name', text: 'Names' },
+    { val: 'country', text: 'Countries' },
+    { val: 'codec', text: 'Codecs' },
+  ];
   let searchParams = {};
   let countries = [];
   let searchedStations = [];
   let newStations = [];
+  let reverseSort = true;
   let isLoading = false;
   let hasMore = false;
   let defaultCountry = '';
@@ -30,6 +39,8 @@
     fetchSearchStations({
       country: defaultCountry,
       countryExact: defaultCountry !== '',
+      order: defaultSort,
+      reverse: reverseSort,
     });
 
     const { data: countryList } = await radioBrowser.get('countries');
@@ -44,8 +55,6 @@
       ...searchParams,
       ...additionalParams,
       limit: limitStations,
-      order: 'votes',
-      reverse: true,
       hideBroken: true,
     };
     if (isReset) {
@@ -98,6 +107,20 @@
     }, true);
   };
 
+  const handleSortChange = async (event) => {
+    const { value: order } = event.target;
+    await fetchSearchStations({
+      order,
+    }, true);
+  };
+
+  const handleSortDirectionChange = async () => {
+    reverseSort = !reverseSort;
+    await fetchSearchStations({
+      reverse: reverseSort,
+    }, true);
+  };
+
   const handleLoadMore = async () => {
     const { offset = 0 } = searchParams;
     await fetchSearchStations({
@@ -110,6 +133,8 @@
     ...newStations,
   ];
 
+  $: iconSort = reverseSort ? 'sort-amount-down' : 'sort-amount-up';
+
 </script>
 
 <div class="search-station">
@@ -119,13 +144,24 @@
       placeholder="Search station by name"
       onInput={handleSearch}
     />
-    <div class="advanced-search">
-      <SelectInput
-        emptyText="-- All Country --"
-        items={countries}
-        onChange={handleCountryChange}
-        selected={defaultCountry}
-      />
+    <div class="filter-wrapper">
+      <div class="search-wrapper">
+        <IconButton iconName="filter" />
+        <SelectInput
+          emptyText="-- All Country --"
+          items={countries}
+          onChange={handleCountryChange}
+          selected={defaultCountry}
+        />
+      </div>
+      <div class="search-wrapper">
+        <IconButton iconName={iconSort} onClick={handleSortDirectionChange} />
+        <SelectInput
+          items={orderList}
+          onChange={handleSortChange}
+          selected={defaultSort}
+        />
+      </div>
     </div>
   </div>
 
@@ -191,7 +227,13 @@
     text-align: center;
   }
 
-  .advanced-search {
+  .filter-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-wrapper {
+    display: flex;
     margin: .5rem 0;
     max-width: 400px;
   }
@@ -204,6 +246,10 @@
   @media screen and (min-width: 768px) {
     .list-wrapper {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-wrapper {
+      flex-direction: row;
     }
   }
 
