@@ -28,7 +28,7 @@
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.6",
-    "@testing-library/jest-dom": "^5.15.0",
+    "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/svelte": "^3.0.3",
     "@zerodevx/svelte-toast": "^0.6.2",
     "babel-jest": "^27.3.1",
